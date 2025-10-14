@@ -60,6 +60,18 @@
   secrets.preservation = false;
   secrets.storage = true;
 
+  modules.metrics = {
+    prometheus = {
+      enable = true;
+      port = 9100;
+    };
+
+    promtail = {
+      enable = true;
+      url = "https://loki.svc.w0lf.io/loki/api/v1/push";
+    };
+  }
+
   # Hostname (unique per host)
   networking.hostName = "storage01";
 

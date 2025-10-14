@@ -1,42 +1,32 @@
 # NixOS Docker Infrastructure Flake
 
-Multi-host NixOS flake for managing Docker Swarm infrastructure with monitoring.
+Multi-host NixOS flake for managing Docker Swarm infrastructure with monitoring and automated token distribution.
 
 ## Structure
 
 ```
 .
 ├── flake.nix                    # Main flake entry point
-├── outputs/                     # Output definitions
-│   ├── nixos.nix               # Host configurations
-│   ├── checks.nix              # Pre-commit hooks
-│   └── ...
 ├── modules/nixos/              # Shared NixOS modules
-│   ├── default.nix             # Common base configuration
-│   ├── docker-host.nix         # Docker host configuration
-│   ├── docker-host-gpu.nix     # GPU Docker host configuration
-│   ├── storage-host.nix        # Storage host configuration
-│   ├── prometheus.nix          # Node exporter monitoring
-│   ├── promtail.nix            # Log shipping to Loki
-│   ├── tailscale.nix           # Tailscale VPN
-│   ├── nfs-client.nix          # NFS client mounts
-│   ├── nfs-server.nix          # NFS server exports
+│   ├── base/                   # Common base configuration
+│   ├── docker/                 # Docker Swarm configuration
+│   │   └── docker.nix         # Main Docker module with auto-join
 │   └── ...
-└── hosts/                      # Per-host hardware configurations
-    ├── dock01/
-    ├── dock02/                 # GPU host
-    ├── dock03-08/
-    └── storage01-03/
+└── hosts/                      # Per-host configurations
+    ├── dock01.nix             # Primary manager node
+    ├── dock02.nix             # GPU worker node
+    └── ...
 ```
 
 ## Hosts
 
-### Docker Hosts (8 total)
-- **dock01, dock03-08** (7 hosts): Standard Docker Swarm workers
-- **dock02** (1 host): GPU-enabled Docker Swarm worker
+### Docker Swarm Architecture
+- **dock01**: Primary manager node (creates swarm, runs token webserver)
+- **dock02**: GPU-enabled worker node
+- **Additional nodes**: Can be configured as managers or workers
 
-### Storage Hosts (3 total)
-- **storage01-03**: NFS storage servers
+### Storage Integration (Optional)
+- NFS storage servers can be added for shared container volumes
 
 ## Features
 
@@ -47,23 +37,25 @@ Multi-host NixOS flake for managing Docker Swarm infrastructure with monitoring.
 - ✅ Automated SSH key management
 - ✅ Common system packages
 
-### Docker Hosts
+### Docker Swarm Features
 - ✅ Docker with btrfs storage driver
-- ✅ Docker Swarm auto-join
-- ✅ NFS client mounts for shared storage
+- ✅ Automated swarm join with failover
+- ✅ Multi-manager token distribution system
+- ✅ Health-based connectivity checks (no ping dependency)
 - ✅ Docker container log collection
 - ✅ Automatic pruning
+- ✅ Docker metrics exporter
 
-### GPU Docker Host (dock02)
-- ✅ NVIDIA Docker runtime
-- ✅ GPU metrics exporter
-- ✅ NVIDIA container toolkit
+### Manager Nodes
+- ✅ Swarm initialization (primary manager)
+- ✅ Token distribution webserver
+- ✅ Manager join capability to existing swarms
+- ✅ Health endpoint for connectivity testing
 
-### Storage Hosts
-- ✅ NFS server with exports
-- ✅ XFS filesystem monitoring
-- ✅ SMART disk health monitoring
-- ✅ Optimized kernel parameters for NFS
+### Worker Nodes
+- ✅ Multi-manager failover support
+- ✅ Automatic token retrieval
+- ✅ GPU support (when enabled)
 
 ## Usage
 
@@ -83,11 +75,10 @@ Multi-host NixOS flake for managing Docker Swarm infrastructure with monitoring.
    - Copy the output to `hosts/<hostname>/hardware-configuration.nix`
    - Customize filesystem UUIDs, network interfaces, etc.
 
-3. **Customize per-host settings:**
-   - Update Docker Swarm tokens and manager IPs in host configs
-   - Update Tailscale auth keys
-   - Update SSH authorized keys
-   - Update NFS server IPs in nfs-client.nix
+3. **Configure Docker Swarm topology:**
+   - Configure the primary manager (creates swarm)
+   - Configure additional managers and workers with manager addresses
+   - Update SSH authorized keys and other host-specific settings
 
 ### Building and Deploying
 
@@ -127,25 +118,92 @@ nix fmt
 nix flake check
 ```
 
+## Docker Swarm Configuration
+
+### Node Types and Configuration
+
+#### Primary Manager Node (Creates Swarm)
+```nix
+modules.docker = {
+  mode = "manager";
+  manager-addrs = []; # Empty list = create swarm
+  metrics-port = 9323;
+  # Optional: token webserver configuration
+  swarm-manager = {
+    enable = true;
+    port = 3505;
+    interface = "0.0.0.0";
+  };
+};
+```
+
+#### Additional Manager Node (Joins Existing Swarm)
+```nix
+modules.docker = {
+  mode = "manager";
+  manager-addrs = [
+    "10.0.1.30"  # Primary manager IP
+    "10.0.1.31"  # Other manager IPs (for failover)
+  ];
+  metrics-port = 9323;
+};
+```
+
+#### Worker Node
+```nix
+modules.docker = {
+  mode = "worker";
+  manager-addrs = [
+    "10.0.1.30"  # Manager IPs (tries in order)
+    "10.0.1.31"
+    "10.0.1.32"
+  ];
+  metrics-port = 9323;
+  enableGPU = true; # Optional: for GPU workers
+};
+```
+
+### Token Distribution System
+
+The system uses a webserver on manager nodes to distribute join tokens:
+
+- **Health endpoint**: `http://MANAGER_IP:3505/health` (connectivity check)
+- **Worker tokens**: `http://MANAGER_IP:3505/swarm/worker`
+- **Manager tokens**: `http://MANAGER_IP:3505/swarm/manager`
+
+### Join Process Flow
+
+1. **Connectivity Check**: Node checks health endpoint on each manager
+2. **Token Retrieval**: Retrieves appropriate token from first responding manager
+3. **Swarm Join**: Joins swarm using retrieved token and manager address
+4. **Failover**: Automatically tries next manager if current fails
+
 ## Customization
 
-### Adding a New Docker Host
+### Adding a New Manager Node
 
-1. Create directory: `mkdir -p hosts/dock09`
-2. Add hardware-configuration.nix
-3. Add to `outputs/nixos.nix`:
-   ```nix
-   dock09 = mkHost "dock09" [ dockerHostModule ];
-   ```
+```nix
+# hosts/dock09.nix
+modules.docker = {
+  mode = "manager";
+  manager-addrs = [ "10.0.1.30" ]; # Existing manager
+  metrics-port = 9323;
+};
+```
 
-### Adding a New Storage Host
+### Adding a New Worker Node
 
-1. Create directory: `mkdir -p hosts/storage04`
-2. Add hardware-configuration.nix with correct filesystem mounts
-3. Add to `outputs/nixos.nix`:
-   ```nix
-   storage04 = mkHost "storage04" [ storageHostModule ];
-   ```
+```nix
+# hosts/dock10.nix
+modules.docker = {
+  mode = "worker";
+  manager-addrs = [
+    "10.0.1.30"  # Primary manager
+    "10.0.1.31"  # Additional managers
+  ];
+  metrics-port = 9323;
+};
+```
 
 ### Modifying Shared Services
 
@@ -172,7 +230,7 @@ Currently secrets are embedded in the flake. Consider:
 
 ## Monitoring Stack
 
-- **Prometheus**: Metrics collection (10.0.1.x)
+- **Prometheus**: Metrics collection
 - **Loki**: Log aggregation (loki.svc.w0lf.io)
 - **Grafana**: Visualization
 - **Node Exporter**: Host metrics (port 9100)
@@ -181,34 +239,70 @@ Currently secrets are embedded in the flake. Consider:
 
 ## Network Layout
 
+### Network Interfaces
 - **ens18**: Primary network interface (DHCP)
-- **ens19**: Secondary interface (not configured)
 - **docker0**: Docker bridge network
 - **docker_gwbridge**: Docker swarm network
 
+### Port Usage
+- **2377/tcp**: Docker Swarm management
+- **7946/tcp+udp**: Container network discovery
+- **4789/udp**: Overlay network traffic
+- **3505/tcp**: Swarm token distribution API (managers only)
+- **9323/tcp**: Docker metrics exporter
+- **9100/tcp**: Node exporter metrics
+- **9080/tcp**: Promtail metrics
+
 ## Troubleshooting
 
-### Docker Swarm not joining
+### Docker Swarm Issues
+
+#### Swarm not joining
 ```bash
+# Check swarm setup service
 systemctl status docker-swarm-setup
 journalctl -u docker-swarm-setup -n 50
+
+# Check current swarm status
+docker info | grep -A 5 "Swarm:"
+
+# Test manager connectivity manually
+curl -v http://MANAGER_IP:3505/health
+curl -v http://MANAGER_IP:3505/swarm/worker
 ```
 
-### NFS mounts not working
+#### Manager token webserver issues
 ```bash
-systemctl status rpcbind
-showmount -e 10.0.1.10
-mount | grep nfs
+# Check if webserver is running (on manager)
+curl http://localhost:3505/health
+curl http://localhost:3505/swarm/manager
+curl http://localhost:3505/swarm/worker
+
+# Check swarm tokens are available
+docker swarm join-token worker
+docker swarm join-token manager
 ```
 
-### Promtail not shipping logs
+#### Network connectivity issues
+```bash
+# Test manager reachability (no ping dependency)
+curl --connect-timeout 5 http://MANAGER_IP:3505/health
+
+# Check firewall ports
+ss -tulpn | grep :3505
+ss -tulpn | grep :2377
+```
+
+### Service Status Checks
+
+#### Monitoring services
 ```bash
 systemctl status promtail
 journalctl -u promtail -n 50
 curl http://localhost:9080/ready
 ```
 
-### Tailscale not connecting
+#### Network services
 ```bash
 systemctl status tailscale-autoconnect
 tailscale status
