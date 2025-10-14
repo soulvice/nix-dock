@@ -116,7 +116,7 @@ in
 
       services.openssh = {
         enable = true;
-        authorizedKeyFiles = lib.mkForce [
+        authorizedKeysFiles = lib.mkForce [
           "/etc/ssh/authorized_keys.d/%u"
         ];
       };
