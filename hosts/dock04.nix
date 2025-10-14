@@ -61,9 +61,35 @@
   # ========================================
   # MODULE CONFIGURATION
   # ========================================
-  modules.docker = { };
   secrets.preservation = false;
   secrets.docker = true;
+
+  modules.metrics = {
+    prometheus = {
+      enable = true;
+      port = 9100;
+    };
+    promtail = {
+      enable = true;
+      url = "https://loki.svc.w0lf.io/loki/api/v1/push";
+    };
+    cadvisor = {
+      enable = true;
+      port 9101;
+    };
+  };
+
+  modules.docker = {
+    enableGPU = false;
+    metrics-port = 9323;
+    mode = "worker";
+    manager-addrs = [
+      "10.0.1.30"
+      "10.0.1.37"
+      "10.0.1.38"
+    ];
+  };
+
 
   # Hostname (unique per host)
   networking.hostName = "dock04";

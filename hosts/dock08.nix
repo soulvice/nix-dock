@@ -61,9 +61,34 @@
   # ========================================
   # MODULE CONFIGURATION
   # ========================================
-  modules.docker = { };
   secrets.preservation = false;
   secrets.docker = true;
+
+  # Custom Modules
+  modules.metrics = {
+    prometheus = {
+      enable = true;
+      port = 9100;
+    };
+    promtail = {
+      enable = true;
+      url = "https://loki.svc.w0lf.io/loki/api/v1/push";
+    };
+    cadvisor = {
+      enable = true;
+      port = 9101;
+    };
+  };
+  modules.docker = {
+    metrics-port = 9323;
+    mode = "manager";
+    manager-addrs = [ "10.0.1.30" ]; # Empty list means create swarm (first manager)
+    swarm-manager = {
+      enable = true;
+      port = 3505;
+      interface = "0.0.0.0";
+    }
+  };
 
   # Hostname (unique per host)
   networking.hostName = "dock08";

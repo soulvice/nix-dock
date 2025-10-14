@@ -9,16 +9,17 @@ in{
       default = "worker";
       description = "Docker swarm host mode";
     };
-    # Worker SWMTKN-1-4i882kdla35vjt6lt20pm6h3vubxhprjekw9ewn5zxedsb6jsm-1lwli46y9yk6swqolij3zoiuh
-    # Manager 
-    swarm-token = mkOption {
-      type = types.string;
-      description = "Swarm Token to Use";
+    # Swarm tokens will be retrieved from manager addresses dynamically
+    manager-addrs = mkOption {
+      type = types.listOf types.string;
+      default = [];
+      description = "List of Manager Node IP addresses";
     };
-    manager-ip = mkOption {
-      type = types.string;
-      description = "IP Address of Manager Node";
-    };
+    # Logic:
+    # - if mode == "manager" && manager-addrs == [] create swarm
+    # - if mode == "manager" && manager-addrs != [] join as manager
+    # - if mode == "worker" join as worker
+
     metrics-port = mkOption {
       type = types.port;
       default = 9323;
@@ -109,52 +110,140 @@ in{
     # =========================================
     {
       systemd.services.docker-swarm-setup = let
+        managerAddrs = builtins.concatStringsSep " " cfg.manager-addrs;
         joiner = if (cfg.mode == "worker") then
           ''# Join as worker
           echo "Joining Docker Swarm as worker..."
           SWARM_IP=$(ip -4 addr show ens18 | grep -oP "(?<=inet\s)\d+(\.\d+){3}" | head -n1)
           echo "Local IP: $SWARM_IP"
-          echo "Manager IP: ${cfg.manager-ip}"
 
           if [ -z "$SWARM_IP" ]; then
             echo "ERROR: Could not determine IP address for ens18"
             exit 1
           fi
 
-          # Test connectivity to manager
-          if ! ping -c 1 -W 2 ${cfg.manager-ip} >/dev/null 2>&1; then
-            echo "WARNING: Cannot ping manager at ${cfg.manager-ip}"
+          # Try each manager address until one works
+          MANAGER_ADDRS=(${managerAddrs})
+          WORKER_TOKEN=""
+          WORKING_MANAGER=""
+
+          for MANAGER_IP in "''${MANAGER_ADDRS[@]}"; do
+            echo "Trying manager: $MANAGER_IP"
+
+            # Test connectivity to manager via health endpoint
+            echo "Checking health endpoint at $MANAGER_IP..."
+            if ! curl -s --connect-timeout 5 --max-time 10 "http://$MANAGER_IP:3001/health" >/dev/null 2>&1; then
+              echo "WARNING: Health check failed for manager at $MANAGER_IP:3001"
+              continue
+            fi
+
+            # Retrieve worker token from manager API
+            echo "Retrieving worker token from manager API at $MANAGER_IP..."
+            API_RESPONSE=$(curl -s --connect-timeout 10 --max-time 30 "http://$MANAGER_IP:3001/swarm/worker" 2>/dev/null || {
+              echo "ERROR: Failed to retrieve worker token from manager API at $MANAGER_IP:3001"
+              continue
+            })
+
+            WORKER_TOKEN=$(echo "$API_RESPONSE" | grep -o '"token":"[^"]*"' | cut -d'"' -f4)
+
+            if [ -n "$WORKER_TOKEN" ]; then
+              WORKING_MANAGER="$MANAGER_IP"
+              echo "Retrieved worker token successfully from $MANAGER_IP"
+              break
+            else
+              echo "ERROR: Retrieved empty worker token from $MANAGER_IP. API Response: $API_RESPONSE"
+            fi
+          done
+
+          if [ -z "$WORKER_TOKEN" ] || [ -z "$WORKING_MANAGER" ]; then
+            echo "ERROR: Failed to retrieve worker token from any manager"
+            exit 1
           fi
 
-          docker swarm join --token ${cfg.swarm-token} --advertise-addr $SWARM_IP ${cfg.manager-ip}:2377 2>&1 || {
+          docker swarm join --token "$WORKER_TOKEN" --advertise-addr $SWARM_IP "$WORKING_MANAGER:2377" 2>&1 || {
             echo "Swarm join failed or already in swarm"
           }
 
           echo "Swarm Status:"
           docker info | grep -A 5 "Swarm:"''
-        else
-          ''# Initialize as manager
-            echo "Initializing Docker Swarm as manager..."
+        else if (cfg.manager-addrs == []) then
+          ''# Create swarm as first manager
+            echo "Creating Docker Swarm as first manager..."
             SWARM_IP=$(ip -4 addr show ens18 | grep -oP "(?<=inet\s)\d+(\.\d+){3}" | head -n1)
             echo "Using IP: $SWARM_IP"
-            
+
             if [ -z "$SWARM_IP" ]; then
               echo "ERROR: Could not determine IP address for ens18"
               exit 1
             fi
-            
+
             docker swarm init --advertise-addr $SWARM_IP 2>&1 || {
               echo "Swarm init failed or already initialized"
             }
-            
+
             echo "Swarm Status:"
-            docker info | grep -A 5 "Swarm:'';
+            docker info | grep -A 5 "Swarm:"''
+        else
+          ''# Join existing swarm as manager
+            echo "Joining existing Docker Swarm as manager..."
+            SWARM_IP=$(ip -4 addr show ens18 | grep -oP "(?<=inet\s)\d+(\.\d+){3}" | head -n1)
+            echo "Local IP: $SWARM_IP"
+
+            if [ -z "$SWARM_IP" ]; then
+              echo "ERROR: Could not determine IP address for ens18"
+              exit 1
+            fi
+
+            # Try each manager address until one works
+            MANAGER_ADDRS=(${managerAddrs})
+            MANAGER_TOKEN=""
+            WORKING_MANAGER=""
+
+            for MANAGER_IP in "''${MANAGER_ADDRS[@]}"; do
+              echo "Trying manager: $MANAGER_IP"
+
+              # Test connectivity to manager via health endpoint
+              echo "Checking health endpoint at $MANAGER_IP..."
+              if ! curl -s --connect-timeout 5 --max-time 10 "http://$MANAGER_IP:3001/health" >/dev/null 2>&1; then
+                echo "WARNING: Health check failed for manager at $MANAGER_IP:3001"
+                continue
+              fi
+
+              # Retrieve manager token from manager API
+              echo "Retrieving manager token from manager API at $MANAGER_IP..."
+              API_RESPONSE=$(curl -s --connect-timeout 10 --max-time 30 "http://$MANAGER_IP:3001/swarm/manager" 2>/dev/null || {
+                echo "ERROR: Failed to retrieve manager token from manager API at $MANAGER_IP:3001"
+                continue
+              })
+
+              MANAGER_TOKEN=$(echo "$API_RESPONSE" | grep -o '"token":"[^"]*"' | cut -d'"' -f4)
+
+              if [ -n "$MANAGER_TOKEN" ]; then
+                WORKING_MANAGER="$MANAGER_IP"
+                echo "Retrieved manager token successfully from $MANAGER_IP"
+                break
+              else
+                echo "ERROR: Retrieved empty manager token from $MANAGER_IP. API Response: $API_RESPONSE"
+              fi
+            done
+
+            if [ -z "$MANAGER_TOKEN" ] || [ -z "$WORKING_MANAGER" ]; then
+              echo "ERROR: Failed to retrieve manager token from any manager"
+              exit 1
+            fi
+
+            docker swarm join --token "$MANAGER_TOKEN" --advertise-addr $SWARM_IP "$WORKING_MANAGER:2377" 2>&1 || {
+              echo "Swarm join failed or already in swarm"
+            }
+
+            echo "Swarm Status:"
+            docker info | grep -A 5 "Swarm:"'';
       in{
         description = "Docker Swarm Setup";
         after = [ "docker.service" "network-online.target" ];
         wants = [ "network-online.target" ];
         wantedBy = [ "multi-user.target" ];
-        path = [ pkgs.iproute2 pkgs.docker pkgs.gnugrep pkgs.iputils ];
+        path = [ pkgs.iproute2 pkgs.docker pkgs.gnugrep pkgs.curl ];
         serviceConfig = {
           Type = "oneshot";
           RemainAfterExit = true;
