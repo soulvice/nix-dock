@@ -4,7 +4,7 @@
     enable = true;
     ports = [ 22 ];
     openFirewall = true;
-    
+
   };
 
   # Add ssh hosts to each system so they can move stuff around
@@ -19,7 +19,6 @@
       { name = "dock07"; addr = "10.0.1.37"; }
       { name = "dock08"; addr = "10.0.1.38"; } ];
   in{
-    enable = true;
     knownHosts = builtins.listToAttrs (
       map (host: {
         name = host.name;
