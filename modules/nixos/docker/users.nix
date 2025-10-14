@@ -10,4 +10,8 @@
       "${config.age.secrets.ssh-key-docker.path}"
     ];
   };
+
+  security.sudo.wheelNeedsPassword = false;
+
+  users.users.root.hashedPassword = "!";
 }

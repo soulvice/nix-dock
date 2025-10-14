@@ -111,12 +111,14 @@ in{
     # =========================================
     {
       systemd.services.docker-swarm-setup = let
+        
         joiner = if (cfg.mode == "worker") then
-          import ./swarm/join-worker.nix
+          (import ./swarm/join-worker.nix { inherit config; })
         else if (cfg.manager-addrs == []) then
-          import ./swarm/create.nix
+          (import ./swarm/create.nix{ inherit config; })
         else
-          import ./swarm/join-manager.nix;
+          (import ./swarm/join-manager.nix { inherit config; });
+
       in{
         description = "Docker Swarm Setup";
         after = [ "docker.service" "network-online.target" ];

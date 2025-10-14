@@ -8,5 +8,6 @@
     ./promtail.nix
     ./system.nix
     ./tailscale.nix
+    ./ssh.nix
   ];
 }
