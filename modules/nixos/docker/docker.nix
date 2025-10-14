@@ -1,5 +1,10 @@
 { config, lib, ... }: with lib; let
   cfg = config.modules.docker;
+  # Determine the token server port - use swarm-manager config if enabled, otherwise docker config
+  tokenServerPort =
+    if config.modules.docker.swarm-manager.enable
+    then toString config.modules.docker.swarm-manager.port
+    else toString cfg.swarm-manager.port;
 in{
   # Options ===================
   options.modules.docker = {
@@ -24,6 +29,20 @@ in{
       type = types.port;
       default = 9323;
       description = "Metrics port for docker daemon";
+    };
+
+    swarm-manager = {
+      enable = mkEnableOption "Enable Swarm token distribution server" // { default = false; };
+      port = mkOption {
+        type = types.port;
+        default = 3505;
+        description = "Port for swarm token distribution server";
+      };
+      interface = mkOption {
+        type = types.string;
+        default = "0.0.0.0";
+        description = "Interface to bind token server to";
+      };
     };
   };
 
@@ -59,7 +78,7 @@ in{
           2377  # Docker Swarm management
           7946  # Container network discovery
           cfg.metrics-port  # Docker metrics
-        ];
+        ] ++ (if cfg.swarm-manager.enable then [ cfg.swarm-manager.port ] else []);
         allowedUDPPorts = [
           4789  # Overlay network traffic
           7946  # Container network discovery
@@ -132,15 +151,15 @@ in{
 
             # Test connectivity to manager via health endpoint
             echo "Checking health endpoint at $MANAGER_IP..."
-            if ! curl -s --connect-timeout 5 --max-time 10 "http://$MANAGER_IP:3001/health" >/dev/null 2>&1; then
-              echo "WARNING: Health check failed for manager at $MANAGER_IP:3001"
+            if ! curl -s --connect-timeout 5 --max-time 10 "http://$MANAGER_IP:${tokenServerPort}/health" >/dev/null 2>&1; then
+              echo "WARNING: Health check failed for manager at $MANAGER_IP:${tokenServerPort}"
               continue
             fi
 
             # Retrieve worker token from manager API
             echo "Retrieving worker token from manager API at $MANAGER_IP..."
-            API_RESPONSE=$(curl -s --connect-timeout 10 --max-time 30 "http://$MANAGER_IP:3001/swarm/worker" 2>/dev/null || {
-              echo "ERROR: Failed to retrieve worker token from manager API at $MANAGER_IP:3001"
+            API_RESPONSE=$(curl -s --connect-timeout 10 --max-time 30 "http://$MANAGER_IP:${tokenServerPort}/swarm/worker" 2>/dev/null || {
+              echo "ERROR: Failed to retrieve worker token from manager API at $MANAGER_IP:${tokenServerPort}"
               continue
             })
 
@@ -204,15 +223,15 @@ in{
 
               # Test connectivity to manager via health endpoint
               echo "Checking health endpoint at $MANAGER_IP..."
-              if ! curl -s --connect-timeout 5 --max-time 10 "http://$MANAGER_IP:3001/health" >/dev/null 2>&1; then
-                echo "WARNING: Health check failed for manager at $MANAGER_IP:3001"
+              if ! curl -s --connect-timeout 5 --max-time 10 "http://$MANAGER_IP:${tokenServerPort}/health" >/dev/null 2>&1; then
+                echo "WARNING: Health check failed for manager at $MANAGER_IP:${tokenServerPort}"
                 continue
               fi
 
               # Retrieve manager token from manager API
               echo "Retrieving manager token from manager API at $MANAGER_IP..."
-              API_RESPONSE=$(curl -s --connect-timeout 10 --max-time 30 "http://$MANAGER_IP:3001/swarm/manager" 2>/dev/null || {
-                echo "ERROR: Failed to retrieve manager token from manager API at $MANAGER_IP:3001"
+              API_RESPONSE=$(curl -s --connect-timeout 10 --max-time 30 "http://$MANAGER_IP:${tokenServerPort}/swarm/manager" 2>/dev/null || {
+                echo "ERROR: Failed to retrieve manager token from manager API at $MANAGER_IP:${tokenServerPort}"
                 continue
               })
 
@@ -279,6 +298,16 @@ in{
         '';
       };
     }
+
+    # TOKEN DISTRIBUTION SERVER ===============
+    # Delegate to swarm-manager module
+    (mkIf cfg.swarm-manager.enable {
+      modules.docker.swarm-manager = {
+        enable = true;
+        port = cfg.swarm-manager.port;
+        interface = cfg.swarm-manager.interface;
+      };
+    })
 
   ];
 }
