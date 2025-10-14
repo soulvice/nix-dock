@@ -100,30 +100,19 @@ in
       };
 
       # place secrets in /etc/
-      #environment.etc = {
-      #  "/ragenix/ssh-key-docker" = {
-      #    source = config.age.secrets."ssh-key-docker".path;
-      #    mode = "0600";
-      #    user = username;
-      #  };
-#
-      #  "/ragenix/ssh-identity-key-docker" = {
-      #    source = config.age.secrets."ssh-identity-key-docker".path;
-      #    mode = "0600";
-      #    user = username;
-      #  };
-      #};
+      environment.etc = {
+        "/ragenix/ssh-key-docker" = {
+          source = config.age.secrets."ssh-key-docker".path;
+          mode = "0600";
+          user = username;
+        };
 
-      # Create symlinks at activation time
-      system.activationScripts.linkDockerSecrets = ''
-        mkdir -p /etc/ragenix
-        ln -sf ${config.age.secrets."ssh-key-docker".path} /etc/ragenix/ssh-key-docker
-        ln -sf ${config.age.secrets."ssh-identity-key-docker".path} /etc/ragenix/ssh-identity-key-docker
-        chown ${username}:users /etc/ragenix/ssh-key-docker
-        chown ${username}:users /etc/ragenix/ssh-identity-key-docker
-        chmod 0600 /etc/ragenix/ssh-key-docker
-        chmod 0600 /etc/ragenix/ssh-identity-key-docker
-      '';
+        "/ragenix/ssh-identity-key-docker" = {
+          source = config.age.secrets."ssh-identity-key-docker".path;
+          mode = "0600";
+          user = username;
+        };
+      };
     })
 
     (mkIf cfg.storage.enable {
@@ -139,21 +128,13 @@ in
       };
 
       # place secrets in /etc/
-      #environment.etc = {
-      #  "/ragenix/ssh-key-storage" = {
-      #    source = config.age.secrets."ssh-key-storage".path;
-      #    mode = "0600";
-      #    user = username;
-      #  };
-      #};
-
-      # Create symlinks at activation time
-      system.activationScripts.linkDockerSecrets = ''
-        mkdir -p /etc/ragenix
-        ln -sf ${config.age.secrets."ssh-key-storage".path} /etc/ragenix/ssh-key-docker
-        chown ${username}:users /etc/ragenix/ssh-key-storage
-        chmod 0600 /etc/ragenix/ssh-key-storage
-      '';
+      environment.etc = {
+        "/ragenix/ssh-key-storage" = {
+          source = config.age.secrets."ssh-key-storage".path;
+          mode = "0600";
+          user = username;
+        };
+      };
     })
   ]);
 }
