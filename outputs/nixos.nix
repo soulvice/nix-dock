@@ -1,10 +1,11 @@
 { inputs, lib, pkgs, pkgs-stable, ... }:
 let
   # Helper to create nixosSystem configurations
-  mkHost = hostname: modules: inputs.nixpkgs.lib.nixosSystem {
+  mkHost = hostname: modules: username: inputs.nixpkgs.lib.nixosSystem {
     system = "x86_64-linux";
     specialArgs = {
-      inherit inputs hostname;
+      inherit (inputs) mysecrets;
+      inherit inputs hostname username;
       pkgs-stable = inputs.nixpkgs-stable.legacyPackages.x86_64-linux;
     };
     modules = [
@@ -13,24 +14,24 @@ let
   };
 
   # Host Config
-  cConfig = name: addr: {
-    inherit name addr;
+  cConfig = name: addr: username: {
+    inherit name addr username;
   };
 
   # Docker Hosts
   dockerHosts = [ 
-    (cConfig "dock01" "10.0.1.30")
-    (cConfig "dock02" "10.0.1.31")
-    (cConfig "dock03" "10.0.1.32")
-    (cConfig "dock04" "10.0.1.33")
-    (cConfig "dock05" "10.0.1.34")
-    (cConfig "dock06" "10.0.1.35")
-    (cConfig "dock07" "10.0.1.37")
-    (cConfig "dock08" "10.0.1.38")
+    (cConfig "dock01" "10.0.1.30" "whale")
+    (cConfig "dock02" "10.0.1.31" "whale")
+    (cConfig "dock03" "10.0.1.32" "whale")
+    (cConfig "dock04" "10.0.1.33" "whale")
+    (cConfig "dock05" "10.0.1.34" "whale")
+    (cConfig "dock06" "10.0.1.35" "whale")
+    (cConfig "dock07" "10.0.1.37" "whale")
+    (cConfig "dock08" "10.0.1.38" "whale")
   ];
 
   storageHosts = [ 
-    (cConfig "storage01" "10.0.1.10")
+    (cConfig "storage01" "10.0.1.10" "hoarder")
   ];
 
   allHosts = dockerHosts ++ storageHosts;
@@ -39,7 +40,7 @@ in {
   nixosConfigurations = builtins.listToAttrs (
     map (host: {
       name = host.name;
-      value = mkHost host.name;
+      value = mkHost host.name [] host.username;
     }) allHosts
   );
 }

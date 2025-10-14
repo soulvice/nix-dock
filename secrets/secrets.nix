@@ -14,8 +14,8 @@ let
   #username = "whale"; # This needs to be changed to dynamic users
 
   enabledServerSecrets =
-    cfg.server.docker.enable
-    || cfg.server.storage.enable;
+    cfg.docker.enable
+    || cfg.storage.enable;
 
   noaccess = {
     mode = "0000";
@@ -36,8 +36,8 @@ in
   ];
 
   options.modules.secrets = {
-    server.docker.enable = mkEnableOption "NixOS Secrets for Docker Servers";
-    server.storage.enable = mkEnableOption "NixOS Secrets for Storage Servers";
+    docker.enable = mkEnableOption "NixOS Secrets for Docker Servers";
+    storage.enable = mkEnableOption "NixOS Secrets for Storage Servers";
     preservation.enable = mkEnableOption "whether use preservation and ephemeral root file system";
   };
 

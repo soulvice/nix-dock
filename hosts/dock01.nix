@@ -62,8 +62,8 @@
   # MODULE CONFIGURATION
   # ========================================
   # System Secrets --
-  secrets.preservation = false;
-  secrets.docker = true;
+  modules.secrets.preservation.enable = false;
+  modules.secrets.docker.enable = true;
 
   # Custom Modules
   modules.metrics = {

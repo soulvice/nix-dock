@@ -35,6 +35,6 @@
     git
   ];
 
-  console.keyMap = "US";
+  console.keyMap = "us";
   system.stateVersion = "25.05";
 }

@@ -1,4 +1,4 @@
-{ config, lib, ... }: with lib; let
+{ config, lib, pkgs, ... }: with lib; let
   cfg = config.modules.docker;
   # Determine the token server port - use swarm-manager config if enabled, otherwise docker config
   tokenServerPort =
@@ -66,7 +66,7 @@ in{
             max-file = "3";
           };
           data-root = "/var/lib/docker";
-          metrics-addr = "0.0.0.0:${cfg.metrics-port}";
+          metrics-addr = "0.0.0.0:${toString cfg.metrics-port}";
           experimental = true;
         };
       };
@@ -298,16 +298,6 @@ in{
         '';
       };
     }
-
-    # TOKEN DISTRIBUTION SERVER ===============
-    # Delegate to swarm-manager module
-    (mkIf cfg.swarm-manager.enable {
-      modules.docker.swarm-manager = {
-        enable = true;
-        port = cfg.swarm-manager.port;
-        interface = cfg.swarm-manager.interface;
-      };
-    })
 
   ];
 }

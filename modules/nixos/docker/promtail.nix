@@ -6,7 +6,7 @@ in{
 
   config = lib.mkIf (cfg.enable) {
     # Docker containers with service discovery
-    services.promtail.scrape_configs = [
+    services.promtail.configuration.scrape_configs = [
       {
         job_name = "docker";
         docker_sd_configs = [

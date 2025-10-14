@@ -61,8 +61,8 @@
   # ========================================
   # MODULE CONFIGURATION
   # ========================================
-  secrets.preservation = false;
-  secrets.docker = true;
+  modules.secrets.preservation.enable = false;
+  modules.secrets.docker.enable = true;
 
   modules.metrics = {
     prometheus = {
@@ -75,7 +75,7 @@
     };
     cadvisor = {
       enable = true;
-      port 9101;
+      port = 9101;
     };
   };
 

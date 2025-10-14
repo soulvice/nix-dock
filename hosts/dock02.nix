@@ -61,8 +61,8 @@
   # ========================================
   # MODULE CONFIGURATION
   # ========================================
-  secrets.preservation = false;
-  secrets.docker = true;
+  modules.secrets.preservation.enable = false;
+  modules.secrets.docker.enable = true;
 
   # Custom Modules
   modules.metrics = {
@@ -76,7 +76,7 @@
     };
     cadvisor = {
       enable = true;
-      port 9101;
+      port = 9101;
     };
   };
 
