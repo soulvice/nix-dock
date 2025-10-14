@@ -94,13 +94,19 @@ in
         } // user_readable;
 
         "ssh-identity-key-docker" = {
-          file = "${mysecrets}/ssh-key-docker.age";
+          file = "${mysecrets}/ssh-identity-key-docker.age";
         } // user_readable;
 
       };
 
       # place secrets in /etc/
       environment.etc = {
+        "/ragenix/ssh-key-docker" = {
+          source = config.age.secrets."ssh-key-docker".path;
+          mode = "0600";
+          user = username;
+        };
+
         "/ragenix/ssh-identity-key-docker" = {
           source = config.age.secrets."ssh-identity-key-docker".path;
           mode = "0600";
