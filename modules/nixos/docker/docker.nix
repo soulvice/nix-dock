@@ -26,20 +26,6 @@ in{
       default = 9323;
       description = "Metrics port for docker daemon";
     };
-
-    swarm-manager = {
-      enable = mkEnableOption "Enable Swarm token distribution server" // { default = false; };
-      port = mkOption {
-        type = types.port;
-        default = 3505;
-        description = "Port for swarm token distribution server";
-      };
-      interface = mkOption {
-        type = types.string;
-        default = "0.0.0.0";
-        description = "Interface to bind token server to";
-      };
-    };
   };
 
 
