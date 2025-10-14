@@ -19,17 +19,17 @@
       { name = "dock07"; addr = "10.0.1.37"; }
       { name = "dock08"; addr = "10.0.1.38"; } ];
   in{
-    knownHosts = builtins.listToAttrs (
-      map (host: {
-        name = host.name;
-        value = {
-          hostNames = [ host.name host.addr ];
-          publicKeyFile = "/etc/ragenix/ssh-key-docker";
-        };
-      }) hosts
-    ) // {
-      # Storage Host
-    };
+    #knownHosts = builtins.listToAttrs (
+    #  map (host: {
+    #    name = host.name;
+    #    value = {
+    #      hostNames = [ host.name host.addr ];
+    #      publicKeyFile = "/etc/ragenix/ssh-key-docker";
+    #    };
+    #  }) hosts
+    #) // {
+    #  # Storage Host
+    #};
 
     extraConfig = lib.concatMapStrings (host: ''
       Host ${host.name}
@@ -37,7 +37,7 @@
         Port 22
         User whale
         IdentityFile /etc/ragenix/ssh-identity-key-docker
-
+        StrictHostKeyChecking accept-new
     '') hosts;
   };
 
