@@ -1,11 +1,20 @@
 { pkgs, ... }:{
   environment.systemPackages =  with pkgs; [
-    parted
-    dig
-    nfs-utils
+
+    # Metrics
     prometheus
     promtail
+
+    # Disk
+    parted
+    nfs-utils
+
+    # Diagnostics
     htop
     btop
+    dig
+
+    # Editing
+    vim
   ];
 }
