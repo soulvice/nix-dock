@@ -1,4 +1,4 @@
-{ self, nixpkgs, nixpkgs-stable, nixpkgs-unstable, pre-commit-hooks } @ inputs:
+{ self, nixpkgs, nixpkgs-stable, nixpkgs-unstable, pre-commit-hooks, ... } @ inputs:
 let
   inherit (inputs.nixpkgs) lib;
 
