@@ -24,7 +24,7 @@
         name = host.name;
         value = {
           hostNames = [ host.name host.addr ];
-          publicKeyFile = "${config.age.secrets.ssh-key-docker.path}";
+          publicKeyFile = "/etc/ragenix/ssh-key-docker";
         };
       }) hosts
     ) // {
@@ -36,7 +36,7 @@
         HostName ${host.addr}
         Port 22
         User whale
-        IdentityFile ${config.age.secrets.ssh-identity-key-docker.path}
+        IdentityFile /etc/ragenix/ssh-identity-key-docker
 
     '') hosts;
   };
