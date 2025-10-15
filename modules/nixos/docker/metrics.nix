@@ -13,21 +13,32 @@ in{
     };
   };
 
-  config = lib.mkIf (cfg.enable) {
-    environment.systemPackages = with pkgs; [
-      cadvisor
-    ];
+  config = lib.mkMerge [
 
-    services.cadvisor = {
-      enable = true;
-      port = cfg.port;
-      listenAddress = "0.0.0.0";
-    };
+    (lib.mkIf (cfg.enable) {
+      environment.systemPackages = with pkgs; [
+        cadvisor
+     ];
 
-    networking.firewall = {
-      allowedTCPPorts = [
-        cfg.port  # cAdvisor metrics
-      ];
-    };
-  };
+      services.cadvisor = {
+        enable = true;
+        port = cfg.port;
+        listenAddress = "0.0.0.0";
+      };
+
+      networking.firewall = {
+        allowedTCPPorts = [
+          cfg.port  # cAdvisor metrics
+        ];
+      };
+    })
+    (lib.mkIf (config.modules.docker.enableGPU) {
+      # NVIDIA GPU Exporter (uses nvidia-smi)
+      services.prometheus.exporters.nvidia-gpu = {
+        enable = true;
+        port = 9835;
+        openFirewall = true;
+      };
+    })
+  ];
 }
