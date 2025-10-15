@@ -3,9 +3,11 @@
 {
   imports = [
     (modulesPath + "/profiles/qemu-guest.nix")
+    ../secrets/secrets.nix
+    
     ../modules/nixos/base
     ../modules/nixos/docker
-    ../secrets/secrets.nix
+    
   ];
 
   # ========================================

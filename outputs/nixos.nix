@@ -14,8 +14,8 @@ let
   };
 
   # Host Config
-  cConfig = name: addr: username: {
-    inherit name addr username;
+  cConfig = hostname: addr: username: {
+    inherit hostname addr username;
   };
 
   # Docker Hosts
@@ -40,7 +40,20 @@ in {
   nixosConfigurations = builtins.listToAttrs (
     map (host: {
       name = host.name;
-      value = mkHost host.name [] host.username;
+      #value = mkHost host.name [] host.username;
+      value = inputs.nixpkgs.lib.nixosSystem {
+        system = "x86_64-linux";
+        specialArgs = {
+          inherit (inputs) mysecrets;
+          inherit inputs;
+          inherit (host) username hostname;
+          pkgs-stable = inputs.nixpkgs-stable.legacyPackages.x86_64-linux;
+          system-hosts = allHosts;
+        };
+        modules = [
+          ../hosts/${host.hostname}.nix
+        ];
+      };
     }) allHosts
   );
 }
