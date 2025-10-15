@@ -11,15 +11,15 @@
       "/etc/ssh/authorized_keys.d/%u"
     ];
 
-    knownHosts = builtins.listToAttrs (
-      map (host: {
-        name = host.hostname;
-        value = {
-          hostNames = [ host.hostname host.addr ];
-          publicKeyFile = "${config.age.secrets.ssh-key-docker.path}";
-        };
-      }) system-hosts
-    );
+    #knownHosts = builtins.listToAttrs (
+    #  map (host: {
+    #    name = host.hostname;
+    #    value = {
+    #      hostNames = [ host.hostname host.addr ];
+    #      publicKeyFile = "${config.age.secrets.ssh-key-docker.path}";
+    #    };
+    #  }) system-hosts
+    #);
   };
 
   # Add ssh hosts to each system so they can move stuff around
