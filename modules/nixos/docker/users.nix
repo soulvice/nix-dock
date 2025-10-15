@@ -9,9 +9,6 @@
     #openssh.authorizedKeys.keyFiles = [
     #  "${config.age.secrets.ssh-key-docker.path}"
     #];
-    openssh.authorizedKeys.keyFiles = [
-      "/etc/ssh/authorized_keys.d/${username}"
-    ];
   };
 
   security.sudo.wheelNeedsPassword = false;

@@ -114,17 +114,18 @@ in
         };
       };
 
+
+      systemd.tmpfiles.rules = [
+        "d /etc/ssh/authorized_keys.d 0755 root root -"
+        "L+ /etc/ssh/authorized_keys.d/${username} - - - - ${config.age.secrets."ssh-key-docker".path}"
+      ];
+
       services.openssh = {
         enable = true;
         authorizedKeysFiles = lib.mkForce [
           "/etc/ssh/authorized_keys.d/%u"
         ];
       };
-
-      systemd.tmpfiles.rules = [
-        "d /etc/ssh/authorized_keys.d 0755 root root -"
-        "L+ /etc/ssh/authorized_keys.d/whale - - - - ${config.age.secrets."ssh-key-docker".path}"
-      ];
     })
 
     (mkIf cfg.storage.enable {
@@ -147,6 +148,18 @@ in
           user = username;
         };
       };
+
+      services.openssh = {
+        enable = true;
+        authorizedKeysFiles = lib.mkForce [
+          "/etc/ssh/authorized_keys.d/%u"
+        ];
+      };
+
+      systemd.tmpfiles.rules = [
+        "d /etc/ssh/authorized_keys.d 0755 root root -"
+        "L+ /etc/ssh/authorized_keys.d/${username} - - - - ${config.age.secrets."ssh-key-docker".path}"
+      ];
     })
   ]);
 }

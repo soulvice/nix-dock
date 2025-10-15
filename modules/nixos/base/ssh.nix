@@ -4,7 +4,9 @@
     enable = true;
     ports = [ 22 ];
     openFirewall = true;
-
+    #authorizedKeysFiles = lib.mkForce [
+    #  "/etc/ssh/authorized_keys.d/%u"
+    #];
   };
 
   # Add ssh hosts to each system so they can move stuff around
