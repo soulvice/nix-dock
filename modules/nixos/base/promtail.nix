@@ -8,7 +8,7 @@ in{
     promtail = {
       enable = lib.mkEnableOption "Enable Promtail" // { default = true; };
       url = lib.mkOption {
-        type = lib.types.string;
+        type = lib.types.str;
         description = "URL for logging collection service";
       };
     };

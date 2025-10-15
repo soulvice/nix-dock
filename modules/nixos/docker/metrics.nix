@@ -36,7 +36,7 @@ in{
       # NVIDIA GPU Exporter (uses nvidia-smi)
       services.prometheus.exporters.nvidia-gpu = {
         enable = true;
-        port = 9835;
+        port = config.modules.docker.metrics-gpu-port;
         openFirewall = true;
       };
     })

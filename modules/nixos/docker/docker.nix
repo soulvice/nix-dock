@@ -12,7 +12,7 @@ in{
     };
     # Swarm tokens will be retrieved from manager addresses dynamically
     manager-addrs = mkOption {
-      type = types.listOf types.string;
+      type = types.listOf types.str;
       default = [];
       description = "List of Manager Node IP addresses";
     };
@@ -25,6 +25,12 @@ in{
       type = types.port;
       default = 9323;
       description = "Metrics port for docker daemon";
+    };
+
+    metrics-gpu-port = mkOption {
+      type = types.port;
+      default = 9835;
+      description = "Metrics port for GPU";
     };
   };
 
@@ -100,11 +106,11 @@ in{
       ];
 
       # NVIDIA GPU Exporter (uses nvidia-smi)
-      services.prometheus.exporters.nvidia-gpu = {
-        enable = true;
-        port = cfg.metrics-port;
-        openFirewall = true;
-      };
+      #services.prometheus.exporters.nvidia-gpu = {
+      #  enable = true;
+      #  port = cfg.metrics-port;
+      #  openFirewall = true;
+      #};
     })
 
     # SWARM SYSTEMD ===========================
