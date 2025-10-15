@@ -60,7 +60,7 @@ in{
           2377  # Docker Swarm management
           7946  # Container network discovery
           cfg.metrics-port  # Docker metrics
-        ] ++ (if cfg.swarm-manager.enable then [ cfg.swarm-manager.port ] else []);
+        ] ++ (if config.modules.docker.swarm-manager.enable then [ config.modules.docker.swarm-manager.port ] else []);
         allowedUDPPorts = [
           4789  # Overlay network traffic
           7946  # Container network discovery

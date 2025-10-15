@@ -2,10 +2,7 @@
 
   cfg = config.modules.docker;
 
-  tokenServerPort =
-    if config.modules.docker.swarm-manager.enable
-    then toString config.modules.docker.swarm-manager.port
-    else toString cfg.swarm-manager.port;
+  tokenServerPort = toString config.modules.docker.swarm-manager.port;
 
   managerAddrs = builtins.concatStringsSep " " cfg.manager-addrs;
 
@@ -41,7 +38,7 @@ in ''# Join as worker
       continue
     })
 
-    WORKER_TOKEN=$(echo "$API_RESPONSE" | grep -o '"token":"[^"]*"' | cut -d'"' -f4)
+    WORKER_TOKEN=$(echo "$API_RESPONSE" | grep -oP '"token":\s*"[^"]*"' | cut -d'"' -f4)
 
     if [ -n "$WORKER_TOKEN" ]; then
       WORKING_MANAGER="$MANAGER_IP"

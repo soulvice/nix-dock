@@ -6,7 +6,7 @@ in {
     enable = mkEnableOption "Enable Docker Swarm Token API Service" // { default = false; };
     port = mkOption {
       type = types.port;
-      default = 3505;
+      default = 3535;
       description = "Port for the swarm token API service";
     };
     interface = mkOption {

@@ -86,7 +86,7 @@
     manager-addrs = []; # Empty list means create swarm (first manager)
     swarm-manager = {
       enable = true;
-      port = 3505;
+      port = 3535;
       interface = "0.0.0.0";
     };
   };

@@ -2,10 +2,7 @@
 
   cfg = config.modules.docker;
 
-  tokenServerPort =
-    if config.modules.docker.swarm-manager.enable
-    then toString config.modules.docker.swarm-manager.port
-    else toString cfg.swarm-manager.port;
+  tokenServerPort = toString config.modules.docker.swarm-manager.port;
 
   managerAddrs = builtins.concatStringsSep " " cfg.manager-addrs;
 

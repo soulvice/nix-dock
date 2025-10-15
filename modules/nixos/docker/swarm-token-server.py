@@ -103,7 +103,7 @@ def main():
     # Get configuration from environment or use defaults
     import os
     host = os.environ.get('SWARM_TOKEN_HOST', '0.0.0.0')
-    port = int(os.environ.get('SWARM_TOKEN_PORT', '3505'))
+    port = int(os.environ.get('SWARM_TOKEN_PORT', '3535'))
 
     logger.info(f"Starting Swarm Token Server on {host}:{port}")
 
