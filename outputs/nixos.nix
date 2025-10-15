@@ -39,6 +39,7 @@ in {
           system-hosts = allHosts;
         };
         modules = [
+          { nixpkgs.config.allowUnfree = true; }
           ../hosts/${host.hostname}.nix
         ];
       };
