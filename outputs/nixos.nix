@@ -39,7 +39,7 @@ let
 in {
   nixosConfigurations = builtins.listToAttrs (
     map (host: {
-      name = host.name;
+      name = host.hostname;
       #value = mkHost host.name [] host.username;
       value = inputs.nixpkgs.lib.nixosSystem {
         system = "x86_64-linux";

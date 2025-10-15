@@ -4,12 +4,12 @@
     enable = true;
     ports = [ 22 ];
     openFirewall = true;
-    authorizedKeysFiles = [
-      "${config.age.secrets.ssh-key-docker.path}"
-    ];
-    #authorizedKeysFiles = lib.mkForce [
-    #  "/etc/ssh/authorized_keys.d/%u"
+    #authorizedKeysFiles = [
+    #  "${config.age.secrets.ssh-key-docker.path}"
     #];
+    authorizedKeysFiles = lib.mkForce [
+      "/etc/ssh/authorized_keys.d/%u"
+    ];
 
     knownHosts = builtins.listToAttrs (
       map (host: {

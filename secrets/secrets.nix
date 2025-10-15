@@ -101,11 +101,11 @@ in
 
       # place secrets in /etc/
       environment.etc = {
-        "/ragenix/ssh-key-docker" = {
-          source = config.age.secrets."ssh-key-docker".path;
-          mode = "0600";
-          user = username;
-        };
+      #  "/ragenix/ssh-key-docker" = {
+      #    source = config.age.secrets."ssh-key-docker".path;
+      #    mode = "0600";
+      #    user = username;
+      #  };
 
         "/ragenix/ssh-identity-key-docker" = {
           source = config.age.secrets."ssh-identity-key-docker".path;
@@ -115,10 +115,10 @@ in
       };
 
 
-      #systemd.tmpfiles.rules = [
-      #  "d /etc/ssh/authorized_keys.d 0755 root root -"
-      #  "L+ /etc/ssh/authorized_keys.d/${username} - - - - ${config.age.secrets."ssh-key-docker".path}"
-      #];
+      systemd.tmpfiles.rules = [
+        "d /etc/ssh/authorized_keys.d 0755 root root -"
+        "L+ /etc/ssh/authorized_keys.d/${username} - - - - ${config.age.secrets."ssh-key-docker".path}"
+      ];
 #
       #services.openssh = {
       #  enable = true;

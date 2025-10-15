@@ -7,7 +7,7 @@
     hashedPassword = "!";
     createHome = true;
     openssh.authorizedKeys.keyFiles = [
-      "${config.age.secrets.ssh-key-docker.path}"
+      "/etc/ragenix/ssh-key-docker"
     ];
   };
 
