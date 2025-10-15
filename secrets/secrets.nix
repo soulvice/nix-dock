@@ -119,13 +119,13 @@ in
         "d /etc/ssh/authorized_keys.d 0755 root root -"
         "L+ /etc/ssh/authorized_keys.d/${username} - - - - ${config.age.secrets."ssh-key-docker".path}"
       ];
-#
-      #services.openssh = {
-      #  enable = true;
-      #  authorizedKeysFiles = lib.mkForce [
-      #    "/etc/ssh/authorized_keys.d/%u"
-      #  ];
-      #};
+
+      services.openssh = {
+        enable = true;
+        authorizedKeysFiles = lib.mkForce [
+          "/etc/ssh/authorized_keys.d/%u"
+        ];
+      };
     })
 
     (mkIf cfg.storage.enable {

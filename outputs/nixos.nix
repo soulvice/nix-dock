@@ -1,17 +1,5 @@
 { inputs, lib, pkgs, pkgs-stable, ... }:
 let
-  # Helper to create nixosSystem configurations
-  mkHost = hostname: modules: username: inputs.nixpkgs.lib.nixosSystem {
-    system = "x86_64-linux";
-    specialArgs = {
-      inherit (inputs) mysecrets;
-      inherit inputs hostname username;
-      pkgs-stable = inputs.nixpkgs-stable.legacyPackages.x86_64-linux;
-    };
-    modules = [
-      ../hosts/${hostname}.nix
-    ] ++ modules;
-  };
 
   # Host Config
   cConfig = hostname: addr: username: {
