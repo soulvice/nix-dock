@@ -83,6 +83,7 @@
   modules.docker = {
     enableGPU = true;
     metrics-port = 9323;
+    metrics-gpu-port = 9835;
     mode = "worker";
     manager-addrs = [
       "10.0.1.30"
