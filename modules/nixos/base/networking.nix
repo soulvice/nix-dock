@@ -7,22 +7,27 @@
 }:
 
 {
-  # Hostname from parameter
-  networking.hostName = hostname;
 
-  # Network Configuration (can be overridden per host)
-  networking.useDHCP = lib.mkDefault false;
+  networking = {
+    hostName = hostname;
 
-  # Timeservers
-  networking.timeServers = [
-    "10.0.0.1"
-  ];
+    useDHCP = lib.mkDefault false;
 
-  # Firewall configuration for Docker Swarm + Monitoring
-  networking.firewall = {
+    timeServers = [ "10.0.0.1" ];
+
+    nameservers = [ "10.0.0.1" ];
+
+    firewall = {
+      enable = true;
+      allowedTCPPorts = [ 22 ];
+    };
+  };
+
+  services.resolved = {
     enable = true;
-    allowedTCPPorts = [
-      22 # SSH
-    ];
+    extraConfig = ''
+      ${if hostname == "dock01" then "DNS=127.0.0.1" else "DNS=10.0.0.1"}
+      FallbackDNS=100.100.100.100
+    '';
   };
 }

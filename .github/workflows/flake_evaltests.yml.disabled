@@ -1,0 +1,207 @@
+name: Nix Flake Eval Tests
+
+on:
+  push:
+    branches:
+      - main
+    paths-ignore:
+      - "scripts/**"
+      - "**.md"
+      - "**.nu"
+      - "Justfile"
+  pull_request:
+    branches:
+      - main
+    paths-ignore:
+      - "scripts/**"
+      - "**.md"
+      - "**.nu"
+      - "Justfile"
+
+jobs:
+  detect-changes:
+    name: Detect changed hosts
+    runs-on: ubuntu-latest
+    outputs:
+      dock-hosts: ${{ steps.changes.outputs.dock-hosts }}
+      storage-hosts: ${{ steps.changes.outputs.storage-hosts }}
+      base-module: ${{ steps.changes.outputs.base-module }}
+      docker-module: ${{ steps.changes.outputs.docker-module }}
+      storage-module: ${{ steps.changes.outputs.storage-module }}
+      matrix: ${{ steps.set-matrix.outputs.matrix }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+
+      - name: Detect file changes
+        id: changes
+        run: |
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            BASE_SHA="${{ github.event.pull_request.base.sha }}"
+          else
+            BASE_SHA="${{ github.event.before }}"
+          fi
+
+          # Get changed files
+          if [ "$BASE_SHA" = "0000000000000000000000000000000000000000" ] || [ -z "$BASE_SHA" ]; then
+            # First push to branch, check all files
+            CHANGED_FILES=$(git ls-files)
+          else
+            CHANGED_FILES=$(git diff --name-only $BASE_SHA HEAD)
+          fi
+
+          echo "Changed files:"
+          echo "$CHANGED_FILES"
+
+          # Check for specific host changes
+          DOCK_HOSTS=""
+          STORAGE_HOSTS=""
+          BASE_MODULE="false"
+          DOCKER_MODULE="false"
+          STORAGE_MODULE="false"
+
+          for file in $CHANGED_FILES; do
+            case "$file" in
+              hosts/dock*.nix)
+                # Auto-detect any dock host (dock01, dock02, dock99, etc.)
+                HOST=$(basename "$file" .nix)
+                DOCK_HOSTS="$DOCK_HOSTS $HOST" ;;
+              hosts/storage*.nix)
+                # Auto-detect any storage host (storage01, storage02, etc.)
+                HOST=$(basename "$file" .nix)
+                STORAGE_HOSTS="$STORAGE_HOSTS $HOST" ;;
+              modules/nixos/base/*) BASE_MODULE="true" ;;
+              modules/nixos/docker/*) DOCKER_MODULE="true" ;;
+              modules/nixos/storage/*) STORAGE_MODULE="true" ;;
+              flake.nix|flake.lock) BASE_MODULE="true"; DOCKER_MODULE="true"; STORAGE_MODULE="true" ;;
+            esac
+          done
+
+          # If base module changed, need to check all hosts
+          if [ "$BASE_MODULE" = "true" ]; then
+            # Dynamically find all dock and storage hosts
+            DOCK_HOSTS=$(ls hosts/dock*.nix 2>/dev/null | xargs -I {} basename {} .nix | xargs)
+            STORAGE_HOSTS=$(ls hosts/storage*.nix 2>/dev/null | xargs -I {} basename {} .nix | xargs)
+          fi
+
+          # If docker module changed, need to check all dock hosts
+          if [ "$DOCKER_MODULE" = "true" ]; then
+            # Dynamically find all dock hosts
+            DOCK_HOSTS=$(ls hosts/dock*.nix 2>/dev/null | xargs -I {} basename {} .nix | xargs)
+          fi
+
+          # If storage module changed, need to check all storage hosts
+          if [ "$STORAGE_MODULE" = "true" ]; then
+            # Dynamically find all storage hosts
+            STORAGE_HOSTS=$(ls hosts/storage*.nix 2>/dev/null | xargs -I {} basename {} .nix | xargs)
+          fi
+
+          # Remove duplicates and clean up
+          DOCK_HOSTS=$(echo $DOCK_HOSTS | tr ' ' '\n' | sort -u | tr '\n' ' ' | xargs)
+          STORAGE_HOSTS=$(echo $STORAGE_HOSTS | tr ' ' '\n' | sort -u | tr '\n' ' ' | xargs)
+
+          echo "dock-hosts=$DOCK_HOSTS" >> $GITHUB_OUTPUT
+          echo "storage-hosts=$STORAGE_HOSTS" >> $GITHUB_OUTPUT
+          echo "base-module=$BASE_MODULE" >> $GITHUB_OUTPUT
+          echo "docker-module=$DOCKER_MODULE" >> $GITHUB_OUTPUT
+          echo "storage-module=$STORAGE_MODULE" >> $GITHUB_OUTPUT
+
+      - name: Set build matrix
+        id: set-matrix
+        run: |
+          HOSTS_TO_BUILD=""
+
+          # Add dock hosts
+          if [ -n "${{ steps.changes.outputs.dock-hosts }}" ]; then
+            for host in ${{ steps.changes.outputs.dock-hosts }}; do
+              HOSTS_TO_BUILD="$HOSTS_TO_BUILD \"$host\""
+            done
+          fi
+
+          # Add storage hosts
+          if [ -n "${{ steps.changes.outputs.storage-hosts }}" ]; then
+            for host in ${{ steps.changes.outputs.storage-hosts }}; do
+              HOSTS_TO_BUILD="$HOSTS_TO_BUILD \"$host\""
+            done
+          fi
+
+          # Remove leading space and format as JSON array
+          HOSTS_TO_BUILD=$(echo "$HOSTS_TO_BUILD" | xargs)
+          if [ -n "$HOSTS_TO_BUILD" ]; then
+            MATRIX="[$(echo "$HOSTS_TO_BUILD" | sed 's/ /, /g')]"
+          else
+            MATRIX="[]"
+          fi
+
+          echo "matrix=$MATRIX" >> $GITHUB_OUTPUT
+          echo "Hosts to check: $MATRIX"
+
+  check-configs:
+    name: Check ${{ matrix.host }}
+    runs-on: ubuntu-latest
+    needs: detect-changes
+    if: needs.detect-changes.outputs.matrix != '[]'
+    strategy:
+      matrix:
+        host: ${{ fromJson(needs.detect-changes.outputs.matrix) }}
+      fail-fast: false
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v5
+
+      - name: Setup SSH key for private repos
+        uses: webfactory/ssh-agent@v0.9.0
+        with:
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+
+      - name: Add GitHub to known hosts
+        run: ssh-keyscan github.com >> ~/.ssh/known_hosts
+
+      - name: Install nix
+        uses: cachix/install-nix-action@v31
+        with:
+          install_url: https://nixos.org/nix/install
+          extra_nix_config: |
+            access-tokens = github.com=${{ secrets.GITHUB_TOKEN }}
+            experimental-features = nix-command flakes
+
+      - name: Check ${{ matrix.host }} configuration
+        run: |
+          echo "Checking ${{ matrix.host }} configuration..."
+          if [[ "${{ matrix.host }}" == dock* ]]; then
+            echo "Checking ${{ matrix.host }} (docker swarm node)..."
+          elif [[ "${{ matrix.host }}" == storage* ]]; then
+            echo "Checking ${{ matrix.host }} (storage node)..."
+          fi
+
+          # Check that the configuration evaluates correctly without building
+          nix eval .#nixosConfigurations.${{ matrix.host }}.config.system.build.toplevel.drvPath --show-trace
+          echo "${{ matrix.host }} configuration check passed!"
+
+  summary:
+    name: Check Summary
+    runs-on: ubuntu-latest
+    needs: [detect-changes, check-configs]
+    if: always()
+    steps:
+      - name: Report results
+        run: |
+          echo "=== Check Summary ==="
+          if [ "${{ needs.detect-changes.outputs.matrix }}" = "[]" ]; then
+            echo "✅ No host configurations need to be checked based on the changes detected."
+          else
+            echo "Hosts that were checked:"
+            echo "${{ needs.detect-changes.outputs.matrix }}" | jq -r '.[]' | while read host; do
+              echo "  - $host"
+            done
+
+            if [ "${{ needs.check-configs.result }}" = "success" ]; then
+              echo "✅ All configuration checks completed successfully!"
+            else
+              echo "❌ Some configuration checks failed. Check the logs above."
+              exit 1
+            fi
+          fi
