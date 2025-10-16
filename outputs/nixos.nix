@@ -6,12 +6,12 @@ let
     inherit hostname addr username;
   };
 
-  wNode = hostname: addr: username: = 
+  wNode = hostname: addr: username: 
     (cConfig hostname addr username) // {
       mode = "worker";
     };
 
-  mNode = hostname: addr: username: =
+  mNode = hostname: addr: username:
     (cConfig hostname addr username) // {
       mode = "manager";
     };
