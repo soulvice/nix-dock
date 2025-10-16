@@ -2,8 +2,9 @@
   cfg = config.modules.docker.swarm-manager;
 
   # Generate list of other manager nodes from system-hosts
+  # Only include hosts with service = "docker" and mode = "manager", excluding current host
   otherManagers = builtins.filter
-    (host: host.mode == "manager" && host.hostname != hostname)
+    (host: host.service == "docker" && host.mode == "manager" && host.hostname != hostname)
     system-hosts;
 
   # Format as "addr:port" strings

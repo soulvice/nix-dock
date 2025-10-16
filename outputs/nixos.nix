@@ -9,11 +9,20 @@ let
   wNode = hostname: addr: username: 
     (cConfig hostname addr username) // {
       mode = "worker";
+      service = "docker";
     };
 
   mNode = hostname: addr: username:
     (cConfig hostname addr username) // {
       mode = "manager";
+      service = "docker";
+    };
+
+  sNode = hostname: addr: username:
+    (cConfig hostname addr username) //
+    {
+      mode = "storage";
+      service = "storage";
     };
 
   # Docker Hosts
@@ -29,7 +38,7 @@ let
   ];
 
   storageHosts = [ 
-    (cConfig "storage01" "10.0.1.10" "hoarder")
+    (sNode "storage01" "10.0.1.10" "hoarder")
   ];
 
   allHosts = dockerHosts ++ storageHosts;
