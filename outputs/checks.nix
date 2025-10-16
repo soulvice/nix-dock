@@ -1,27 +1,28 @@
-{ inputs, lib, pkgs, pkgs-stable, ... }:
+{
+  inputs,
+  lib,
+  pkgs,
+  pkgs-stable,
+  ...
+}:
 
 let
   pre-commit = inputs.pre-commit-hooks.lib.x86_64-linux.run {
     src = ../.;
     hooks = {
       # Nix formatting
-      nixpkgs-fmt = {
+      nixfmt-rfc-style = {
         enable = true;
       };
 
-      # Nix linting
-      statix = {
+      # General code formatting
+      prettier = {
         enable = true;
       };
 
-      # Dead code detection
-      deadnix = {
+      # Python linting
+      ruff = {
         enable = true;
-      };
-
-      # Nix evaluation check
-      nix-linter = {
-        enable = false; # Can be enabled if nix-linter is needed
       };
     };
   };
@@ -32,12 +33,12 @@ in
   };
 
   # Development shell with pre-commit hooks
-  devShells.x86_64-linux.default = pkgs.nixpkgs.legacyPackages.x86_64-linux.mkShell {
+  devShells.x86_64-linux.default = pkgs.legacyPackages.x86_64-linux.mkShell {
     inherit (pre-commit) shellHook;
     buildInputs = pre-commit.enabledPackages ++ [
-      pkgs.nixpkgs.legacyPackages.x86_64-linux.nixpkgs-fmt
-      pkgs.nixpkgs.legacyPackages.x86_64-linux.statix
-      pkgs.nixpkgs.legacyPackages.x86_64-linux.deadnix
+      pkgs.legacyPackages.x86_64-linux.nixfmt-rfc-style
+      pkgs.legacyPackages.x86_64-linux.nodePackages.prettier
+      pkgs.legacyPackages.x86_64-linux.ruff
     ];
   };
 }
