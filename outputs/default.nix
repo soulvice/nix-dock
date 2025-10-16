@@ -1,4 +1,11 @@
-{ self, nixpkgs, nixpkgs-stable, nixpkgs-unstable, pre-commit-hooks, ... } @ inputs:
+{
+  self,
+  nixpkgs,
+  nixpkgs-stable,
+  nixpkgs-unstable,
+  pre-commit-hooks,
+  ...
+}@inputs:
 let
   inherit (inputs.nixpkgs) lib;
 
@@ -10,8 +17,11 @@ let
 
   nixosOutputs = import ./nixos.nix sharedArgs;
   packageOutputs = import ./packages.nix sharedArgs;
-  devShells = import ./devshells.nix sharedArgs // { inherit self; };
+  devShells = import ./devshells.nix sharedArgs // {
+    inherit self;
+  };
   checks = import ./checks.nix sharedArgs;
   formatters = import ./formatters.nix (removeAttrs sharedArgs [ "lib" ]);
 
-in nixosOutputs // packageOutputs // devShells // checks // formatters
+in
+nixosOutputs // packageOutputs // devShells // checks // formatters

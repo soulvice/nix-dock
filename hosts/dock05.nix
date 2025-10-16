@@ -1,4 +1,10 @@
-{ config, lib, pkgs, modulesPath, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  modulesPath,
+  ...
+}:
 
 {
   imports = [
@@ -11,39 +17,46 @@
   # ========================================
   # HARDWARE CONFIGURATION (unique to this host)
   # ========================================
-  boot.initrd.availableKernelModules = [ "ata_piix" "uhci_hcd" "virtio_pci" "virtio_scsi" "sd_mod" "sr_mod" ];
+  boot.initrd.availableKernelModules = [
+    "ata_piix"
+    "uhci_hcd"
+    "virtio_pci"
+    "virtio_scsi"
+    "sd_mod"
+    "sr_mod"
+  ];
   boot.initrd.kernelModules = [ ];
   boot.kernelModules = [ ];
   boot.extraModulePackages = [ ];
 
-  fileSystems."/" =
-    { device = "/dev/disk/by-uuid/c175d6cc-7db0-4bcb-b13b-10d32af9cd88";
-      fsType = "btrfs";
-      options = [ "subvol=@root" ];
-    };
+  fileSystems."/" = {
+    device = "/dev/disk/by-uuid/c175d6cc-7db0-4bcb-b13b-10d32af9cd88";
+    fsType = "btrfs";
+    options = [ "subvol=@root" ];
+  };
 
-  fileSystems."/home" =
-    { device = "/dev/disk/by-uuid/c175d6cc-7db0-4bcb-b13b-10d32af9cd88";
-      fsType = "btrfs";
-      options = [ "subvol=@home" ];
-    };
+  fileSystems."/home" = {
+    device = "/dev/disk/by-uuid/c175d6cc-7db0-4bcb-b13b-10d32af9cd88";
+    fsType = "btrfs";
+    options = [ "subvol=@home" ];
+  };
 
-  fileSystems."/nix" =
-    { device = "/dev/disk/by-uuid/c175d6cc-7db0-4bcb-b13b-10d32af9cd88";
-      fsType = "btrfs";
-      options = [ "subvol=@nix" ];
-    };
+  fileSystems."/nix" = {
+    device = "/dev/disk/by-uuid/c175d6cc-7db0-4bcb-b13b-10d32af9cd88";
+    fsType = "btrfs";
+    options = [ "subvol=@nix" ];
+  };
 
-  fileSystems."/var/lib/docker" =
-    { device = "/dev/disk/by-uuid/c175d6cc-7db0-4bcb-b13b-10d32af9cd88";
-      fsType = "btrfs";
-      options = [ "subvol=@docker" ];
-    };
+  fileSystems."/var/lib/docker" = {
+    device = "/dev/disk/by-uuid/c175d6cc-7db0-4bcb-b13b-10d32af9cd88";
+    fsType = "btrfs";
+    options = [ "subvol=@docker" ];
+  };
 
-  fileSystems."/boot" =
-    { device = "/dev/disk/by-uuid/bfc36240-9915-4506-9ff0-f3846ddb1470";
-      fsType = "ext4";
-    };
+  fileSystems."/boot" = {
+    device = "/dev/disk/by-uuid/bfc36240-9915-4506-9ff0-f3846ddb1470";
+    fsType = "ext4";
+  };
 
   swapDevices = [ ];
 
@@ -89,7 +102,6 @@
       "10.0.1.38"
     ];
   };
-
 
   # Hostname (unique per host)
   networking.hostName = "dock05";

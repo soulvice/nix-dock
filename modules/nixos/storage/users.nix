@@ -1,9 +1,14 @@
-{ config, ... }:{
+{ config, ... }:
+{
   # User Configuration
   users.users.hoarder = {
     isNormalUser = true;
     description = "Storage Admin";
-    extraGroups = [ "wheel" "networkmanager" "systemd-journal" ];
+    extraGroups = [
+      "wheel"
+      "networkmanager"
+      "systemd-journal"
+    ];
     hashedPassword = "!";
     createHome = true;
     openssh.authorizedKeys.keyFiles = [

@@ -1,4 +1,10 @@
-{ config, lib, pkgs, modulesPath, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  modulesPath,
+  ...
+}:
 
 {
   imports = [
@@ -11,39 +17,46 @@
   # ========================================
   # HARDWARE CONFIGURATION (unique to this host)
   # ========================================
-  boot.initrd.availableKernelModules = [ "ata_piix" "uhci_hcd" "virtio_pci" "virtio_scsi" "sd_mod" "sr_mod" ];
+  boot.initrd.availableKernelModules = [
+    "ata_piix"
+    "uhci_hcd"
+    "virtio_pci"
+    "virtio_scsi"
+    "sd_mod"
+    "sr_mod"
+  ];
   boot.initrd.kernelModules = [ ];
   boot.kernelModules = [ ];
   boot.extraModulePackages = [ ];
 
-  fileSystems."/" =
-    { device = "/dev/disk/by-uuid/ee984dbe-e3c2-4acd-9516-d845ef70f003";
-      fsType = "btrfs";
-      options = [ "subvol=@root" ];
-    };
+  fileSystems."/" = {
+    device = "/dev/disk/by-uuid/ee984dbe-e3c2-4acd-9516-d845ef70f003";
+    fsType = "btrfs";
+    options = [ "subvol=@root" ];
+  };
 
-  fileSystems."/home" =
-    { device = "/dev/disk/by-uuid/ee984dbe-e3c2-4acd-9516-d845ef70f003";
-      fsType = "btrfs";
-      options = [ "subvol=@home" ];
-    };
+  fileSystems."/home" = {
+    device = "/dev/disk/by-uuid/ee984dbe-e3c2-4acd-9516-d845ef70f003";
+    fsType = "btrfs";
+    options = [ "subvol=@home" ];
+  };
 
-  fileSystems."/nix" =
-    { device = "/dev/disk/by-uuid/ee984dbe-e3c2-4acd-9516-d845ef70f003";
-      fsType = "btrfs";
-      options = [ "subvol=@nix" ];
-    };
+  fileSystems."/nix" = {
+    device = "/dev/disk/by-uuid/ee984dbe-e3c2-4acd-9516-d845ef70f003";
+    fsType = "btrfs";
+    options = [ "subvol=@nix" ];
+  };
 
-  fileSystems."/var/lib/docker" =
-    { device = "/dev/disk/by-uuid/ee984dbe-e3c2-4acd-9516-d845ef70f003";
-      fsType = "btrfs";
-      options = [ "subvol=@docker" ];
-    };
+  fileSystems."/var/lib/docker" = {
+    device = "/dev/disk/by-uuid/ee984dbe-e3c2-4acd-9516-d845ef70f003";
+    fsType = "btrfs";
+    options = [ "subvol=@docker" ];
+  };
 
-  fileSystems."/boot" =
-    { device = "/dev/disk/by-uuid/1de10ed8-183f-4b31-916e-bb0e4cc85253";
-      fsType = "ext4";
-    };
+  fileSystems."/boot" = {
+    device = "/dev/disk/by-uuid/1de10ed8-183f-4b31-916e-bb0e4cc85253";
+    fsType = "ext4";
+  };
 
   swapDevices = [ ];
 

@@ -21,16 +21,19 @@ Multi-host NixOS flake for managing Docker Swarm infrastructure with monitoring 
 ## Hosts
 
 ### Docker Swarm Architecture
+
 - **dock01**: Primary manager node (creates swarm, runs token webserver)
 - **dock02**: GPU-enabled worker node
 - **Additional nodes**: Can be configured as managers or workers
 
 ### Storage Integration (Optional)
+
 - NFS storage servers can be added for shared container volumes
 
 ## Features
 
 ### All Hosts
+
 - ✅ Prometheus node_exporter for metrics
 - ✅ Promtail for log shipping to Loki
 - ✅ Tailscale for secure networking
@@ -38,6 +41,7 @@ Multi-host NixOS flake for managing Docker Swarm infrastructure with monitoring 
 - ✅ Common system packages
 
 ### Docker Swarm Features
+
 - ✅ Docker with btrfs storage driver
 - ✅ Automated swarm join with failover
 - ✅ Multi-manager token distribution system
@@ -47,12 +51,14 @@ Multi-host NixOS flake for managing Docker Swarm infrastructure with monitoring 
 - ✅ Docker metrics exporter
 
 ### Manager Nodes
+
 - ✅ Swarm initialization (primary manager)
 - ✅ Token distribution webserver
 - ✅ Manager join capability to existing swarms
 - ✅ Health endpoint for connectivity testing
 
 ### Worker Nodes
+
 - ✅ Multi-manager failover support
 - ✅ Automatic token retrieval
 - ✅ GPU support (when enabled)
@@ -62,12 +68,14 @@ Multi-host NixOS flake for managing Docker Swarm infrastructure with monitoring 
 ### Initial Setup
 
 1. **Clone the repository:**
+
    ```bash
    git clone <repo-url> /docker/shared.d/nix-dock
    cd /docker/shared.d/nix-dock
    ```
 
 2. **Configure hardware for each host:**
+
    - Generate hardware configuration on the target host:
      ```bash
      nixos-generate-config --show-hardware-config
@@ -83,6 +91,7 @@ Multi-host NixOS flake for managing Docker Swarm infrastructure with monitoring 
 ### Building and Deploying
 
 #### Build a specific host configuration:
+
 ```bash
 nixos-rebuild build --flake .#dock01
 nixos-rebuild build --flake .#dock02
@@ -90,11 +99,13 @@ nixos-rebuild build --flake .#storage01
 ```
 
 #### Deploy to a host (run on the target machine):
+
 ```bash
 sudo nixos-rebuild switch --flake /docker/shared.d/nix-dock#dock01
 ```
 
 #### Deploy remotely (from your workstation):
+
 ```bash
 nixos-rebuild switch --flake .#dock01 --target-host whale@dock01 --use-remote-sudo
 ```
@@ -102,6 +113,7 @@ nixos-rebuild switch --flake .#dock01 --target-host whale@dock01 --use-remote-su
 ### Development
 
 #### Enable pre-commit hooks:
+
 ```bash
 nix develop
 ```
@@ -109,11 +121,13 @@ nix develop
 This will set up automatic formatting and linting for Nix files.
 
 #### Format all Nix files:
+
 ```bash
 nix fmt
 ```
 
 #### Run checks:
+
 ```bash
 nix flake check
 ```
@@ -123,6 +137,7 @@ nix flake check
 ### Node Types and Configuration
 
 #### Primary Manager Node (Creates Swarm)
+
 ```nix
 modules.docker = {
   mode = "manager";
@@ -138,6 +153,7 @@ modules.docker = {
 ```
 
 #### Additional Manager Node (Joins Existing Swarm)
+
 ```nix
 modules.docker = {
   mode = "manager";
@@ -150,6 +166,7 @@ modules.docker = {
 ```
 
 #### Worker Node
+
 ```nix
 modules.docker = {
   mode = "worker";
@@ -208,6 +225,7 @@ modules.docker = {
 ### Modifying Shared Services
 
 All monitoring and shared services are in `modules/nixos/`:
+
 - **prometheus.nix**: Node exporter configuration
 - **promtail.nix**: Log shipping configuration
 - **tailscale.nix**: VPN configuration
@@ -217,6 +235,7 @@ Changes to these modules affect all hosts.
 ## GitHub Actions (Future)
 
 The plan is to:
+
 1. Run `nix flake check` on every push
 2. Automatically trigger deployments on specific hosts when their configs change
 3. Use GitHub Actions to validate all configurations
@@ -224,6 +243,7 @@ The plan is to:
 ## Secrets Management
 
 Currently secrets are embedded in the flake. Consider:
+
 - Using `sops-nix` for secrets management
 - Using `agenix` for age-encrypted secrets
 - Using environment variables or external secret stores
@@ -240,11 +260,13 @@ Currently secrets are embedded in the flake. Consider:
 ## Network Layout
 
 ### Network Interfaces
+
 - **ens18**: Primary network interface (DHCP)
 - **docker0**: Docker bridge network
 - **docker_gwbridge**: Docker swarm network
 
 ### Port Usage
+
 - **2377/tcp**: Docker Swarm management
 - **7946/tcp+udp**: Container network discovery
 - **4789/udp**: Overlay network traffic
@@ -258,6 +280,7 @@ Currently secrets are embedded in the flake. Consider:
 ### Docker Swarm Issues
 
 #### Swarm not joining
+
 ```bash
 # Check swarm setup service
 systemctl status docker-swarm-setup
@@ -272,6 +295,7 @@ curl -v http://MANAGER_IP:3505/swarm/worker
 ```
 
 #### Manager token webserver issues
+
 ```bash
 # Check if webserver is running (on manager)
 curl http://localhost:3505/health
@@ -284,6 +308,7 @@ docker swarm join-token manager
 ```
 
 #### Network connectivity issues
+
 ```bash
 # Test manager reachability (no ping dependency)
 curl --connect-timeout 5 http://MANAGER_IP:3505/health
@@ -296,6 +321,7 @@ ss -tulpn | grep :2377
 ### Service Status Checks
 
 #### Monitoring services
+
 ```bash
 systemctl status promtail
 journalctl -u promtail -n 50
@@ -303,6 +329,7 @@ curl http://localhost:9080/ready
 ```
 
 #### Network services
+
 ```bash
 systemctl status tailscale-autoconnect
 tailscale status

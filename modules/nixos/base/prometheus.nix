@@ -1,10 +1,20 @@
-{ config, pkgs, lib, hostname, ... }:let
+{
+  config,
+  pkgs,
+  lib,
+  hostname,
+  ...
+}:
+let
 
   cfg = config.modules.metrics.prometheus;
 
-in{
+in
+{
   options.modules.metrics.prometheus = {
-    enable = lib.mkEnableOption "Enable Prometheus Metrics" // { default = true; };
+    enable = lib.mkEnableOption "Enable Prometheus Metrics" // {
+      default = true;
+    };
     port = lib.mkOption {
       type = lib.types.port;
       description = "Network port to use for metrics";
@@ -16,7 +26,7 @@ in{
     # Firewall configuration for Docker Swarm + Monitoring
     networking.firewall = {
       allowedTCPPorts = [
-        cfg.port  # Node Exporter
+        cfg.port # Node Exporter
       ];
     };
 

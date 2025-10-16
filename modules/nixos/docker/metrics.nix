@@ -1,9 +1,16 @@
-{ config, lib, pkgs, ... }: let
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
+let
 
   cfg = config.modules.metrics.cadvisor;
 
-in{
-  
+in
+{
+
   options.modules.metrics.cadvisor = {
     enable = lib.mkEnableOption "Enable cAdvisor for docker container metrics";
     port = lib.mkOption {
@@ -18,7 +25,7 @@ in{
     (lib.mkIf (cfg.enable) {
       environment.systemPackages = with pkgs; [
         cadvisor
-     ];
+      ];
 
       services.cadvisor = {
         enable = true;
@@ -28,7 +35,7 @@ in{
 
       networking.firewall = {
         allowedTCPPorts = [
-          cfg.port  # cAdvisor metrics
+          cfg.port # cAdvisor metrics
         ];
       };
     })

@@ -1,4 +1,10 @@
-{ config, lib, pkgs, modulesPath, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  modulesPath,
+  ...
+}:
 
 {
   imports = [
@@ -11,39 +17,46 @@
   # ========================================
   # HARDWARE CONFIGURATION (unique to this host)
   # ========================================
-  boot.initrd.availableKernelModules = [ "ata_piix" "uhci_hcd" "virtio_pci" "virtio_scsi" "sd_mod" "sr_mod" ];
+  boot.initrd.availableKernelModules = [
+    "ata_piix"
+    "uhci_hcd"
+    "virtio_pci"
+    "virtio_scsi"
+    "sd_mod"
+    "sr_mod"
+  ];
   boot.initrd.kernelModules = [ ];
   boot.kernelModules = [ "kvm-intel" ];
   boot.extraModulePackages = [ ];
 
-  fileSystems."/" =
-    { device = "/dev/disk/by-uuid/72578c59-8c77-40ba-b7b0-51644521b621";
-      fsType = "btrfs";
-      options = [ "subvol=@root" ];
-    };
+  fileSystems."/" = {
+    device = "/dev/disk/by-uuid/72578c59-8c77-40ba-b7b0-51644521b621";
+    fsType = "btrfs";
+    options = [ "subvol=@root" ];
+  };
 
-  fileSystems."/home" =
-    { device = "/dev/disk/by-uuid/72578c59-8c77-40ba-b7b0-51644521b621";
-      fsType = "btrfs";
-      options = [ "subvol=@home" ];
-    };
+  fileSystems."/home" = {
+    device = "/dev/disk/by-uuid/72578c59-8c77-40ba-b7b0-51644521b621";
+    fsType = "btrfs";
+    options = [ "subvol=@home" ];
+  };
 
-  fileSystems."/nix" =
-    { device = "/dev/disk/by-uuid/72578c59-8c77-40ba-b7b0-51644521b621";
-      fsType = "btrfs";
-      options = [ "subvol=@nix" ];
-    };
+  fileSystems."/nix" = {
+    device = "/dev/disk/by-uuid/72578c59-8c77-40ba-b7b0-51644521b621";
+    fsType = "btrfs";
+    options = [ "subvol=@nix" ];
+  };
 
-  fileSystems."/var/lib/docker" =
-    { device = "/dev/disk/by-uuid/72578c59-8c77-40ba-b7b0-51644521b621";
-      fsType = "btrfs";
-      options = [ "subvol=@docker" ];
-    };
+  fileSystems."/var/lib/docker" = {
+    device = "/dev/disk/by-uuid/72578c59-8c77-40ba-b7b0-51644521b621";
+    fsType = "btrfs";
+    options = [ "subvol=@docker" ];
+  };
 
-  fileSystems."/boot" =
-    { device = "/dev/disk/by-uuid/863b5741-6cf6-4d59-8569-6b32edb19c8a";
-      fsType = "ext4";
-    };
+  fileSystems."/boot" = {
+    device = "/dev/disk/by-uuid/863b5741-6cf6-4d59-8569-6b32edb19c8a";
+    fsType = "ext4";
+  };
 
   swapDevices = [ ];
 
@@ -83,7 +96,7 @@
   modules.docker = {
     metrics-port = 9323;
     mode = "manager";
-    manager-addrs = []; # Empty list means create swarm (first manager)
+    manager-addrs = [ ]; # Empty list means create swarm (first manager)
     swarm-manager = {
       enable = true;
       port = 3535;

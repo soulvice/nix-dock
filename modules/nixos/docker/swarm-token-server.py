@@ -8,7 +8,6 @@ import logging
 from urllib.parse import urlparse
 import urllib.request
 import urllib.error
-import threading
 import time
 import os
 

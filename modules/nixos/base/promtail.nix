@@ -1,12 +1,22 @@
-{ config, pkgs, lib, hostname, ... }: let
+{
+  config,
+  pkgs,
+  lib,
+  hostname,
+  ...
+}:
+let
 
   cfg = config.modules.metrics.promtail;
 
-in{
+in
+{
   # OPTIONS ========================
   options.modules.metrics = {
     promtail = {
-      enable = lib.mkEnableOption "Enable Promtail" // { default = true; };
+      enable = lib.mkEnableOption "Enable Promtail" // {
+        default = true;
+      };
       url = lib.mkOption {
         type = lib.types.str;
         description = "URL for logging collection service";
@@ -90,6 +100,6 @@ in{
       group = "promtail";
       extraGroups = [ "systemd-journal" ];
     };
-    users.groups.promtail = {};
+    users.groups.promtail = { };
   };
 }

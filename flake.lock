@@ -4,10 +4,7 @@
       "inputs": {
         "darwin": "darwin",
         "home-manager": "home-manager",
-        "nixpkgs": [
-          "ragenix",
-          "nixpkgs"
-        ],
+        "nixpkgs": ["ragenix", "nixpkgs"],
         "systems": "systems"
       },
       "locked": {
@@ -41,11 +38,7 @@
     },
     "darwin": {
       "inputs": {
-        "nixpkgs": [
-          "ragenix",
-          "agenix",
-          "nixpkgs"
-        ]
+        "nixpkgs": ["ragenix", "agenix", "nixpkgs"]
       },
       "locked": {
         "lastModified": 1700795494,
@@ -98,10 +91,7 @@
     },
     "gitignore": {
       "inputs": {
-        "nixpkgs": [
-          "pre-commit-hooks",
-          "nixpkgs"
-        ]
+        "nixpkgs": ["pre-commit-hooks", "nixpkgs"]
       },
       "locked": {
         "lastModified": 1709087332,
@@ -119,11 +109,7 @@
     },
     "home-manager": {
       "inputs": {
-        "nixpkgs": [
-          "ragenix",
-          "agenix",
-          "nixpkgs"
-        ]
+        "nixpkgs": ["ragenix", "agenix", "nixpkgs"]
       },
       "locked": {
         "lastModified": 1703113217,
@@ -225,9 +211,7 @@
       "inputs": {
         "flake-compat": "flake-compat",
         "gitignore": "gitignore",
-        "nixpkgs": [
-          "nixpkgs"
-        ]
+        "nixpkgs": ["nixpkgs"]
       },
       "locked": {
         "lastModified": 1759523803,
@@ -278,10 +262,7 @@
     },
     "rust-overlay": {
       "inputs": {
-        "nixpkgs": [
-          "ragenix",
-          "nixpkgs"
-        ]
+        "nixpkgs": ["ragenix", "nixpkgs"]
       },
       "locked": {
         "lastModified": 1741400194,
@@ -299,9 +280,7 @@
     },
     "sops-nix": {
       "inputs": {
-        "nixpkgs": [
-          "nixpkgs"
-        ]
+        "nixpkgs": ["nixpkgs"]
       },
       "locked": {
         "lastModified": 1760240450,

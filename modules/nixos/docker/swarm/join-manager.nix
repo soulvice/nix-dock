@@ -1,4 +1,5 @@
-{ config, ... }:let
+{ config, ... }:
+let
 
   cfg = config.modules.docker;
 
@@ -6,7 +7,8 @@
 
   managerAddrs = builtins.concatStringsSep " " cfg.manager-addrs;
 
-in ''
+in
+''
   # Join existing swarm as manager
   echo "Joining existing Docker Swarm as manager..."
   SWARM_IP=$(ip -4 addr show ens18 | grep -oP "(?<=inet\s)\d+(\.\d+){3}" | head -n1)

@@ -13,9 +13,7 @@ let
 
   #username = "whale"; # This needs to be changed to dynamic users
 
-  enabledServerSecrets =
-    cfg.docker.enable
-    || cfg.storage.enable;
+  enabledServerSecrets = cfg.docker.enable || cfg.storage.enable;
 
   noaccess = {
     mode = "0000";
@@ -62,16 +60,16 @@ in
 
       # secrets that are used by all nixos hosts
       age.secrets = {
-        "nix-access-tokens" =
-          {
-            file = "${mysecrets}/nix-access-tokens.age";
-          }
-          # access-token needs to be readable by the user running the `nix` command
-          // user_readable;
+        "nix-access-tokens" = {
+          file = "${mysecrets}/nix-access-tokens.age";
+        }
+        # access-token needs to be readable by the user running the `nix` command
+        // user_readable;
 
         "tailscale-auth-key" = {
           file = "${mysecrets}/tailscale_auth_key.age";
-        } // high_security;
+        }
+        // high_security;
       };
 
       assertions = [
@@ -91,21 +89,23 @@ in
 
         "ssh-key-docker" = {
           file = "${mysecrets}/ssh-key-docker.age";
-        } // user_readable;
+        }
+        // user_readable;
 
         "ssh-identity-key-docker" = {
           file = "${mysecrets}/ssh-identity-key-docker.age";
-        } // user_readable;
+        }
+        // user_readable;
 
       };
 
       # place secrets in /etc/
       environment.etc = {
-      #  "/ragenix/ssh-key-docker" = {
-      #    source = config.age.secrets."ssh-key-docker".path;
-      #    mode = "0600";
-      #    user = username;
-      #  };
+        #  "/ragenix/ssh-key-docker" = {
+        #    source = config.age.secrets."ssh-key-docker".path;
+        #    mode = "0600";
+        #    user = username;
+        #  };
 
         "/ragenix/ssh-identity-key-docker" = {
           source = config.age.secrets."ssh-identity-key-docker".path;
@@ -113,7 +113,6 @@ in
           user = username;
         };
       };
-
 
       systemd.tmpfiles.rules = [
         "d /etc/ssh/authorized_keys.d 0755 root root -"
@@ -136,7 +135,8 @@ in
 
         "ssh-key-storage" = {
           file = "${mysecrets}/ssh-key-storage.age";
-        } // user_readable;
+        }
+        // user_readable;
 
       };
 

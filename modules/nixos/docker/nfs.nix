@@ -1,11 +1,29 @@
-{ config, pkgs, lib, ... }:
+{
+  config,
+  pkgs,
+  lib,
+  ...
+}:
 let
 
   storageHost = "10.0.1.10";
   baseFolder = "${storageHost}:/data/store01/docker";
-  commonNFSOpts = [ "nfsvers=4.2" "rw" "hard" "intr" "timeo=14" "rsize=32768" "wsize=32768" "_netdev" "nofail" "x-systemd.automount" "noauto" ];
+  commonNFSOpts = [
+    "nfsvers=4.2"
+    "rw"
+    "hard"
+    "intr"
+    "timeo=14"
+    "rsize=32768"
+    "wsize=32768"
+    "_netdev"
+    "nofail"
+    "x-systemd.automount"
+    "noauto"
+  ];
 
-in {
+in
+{
 
   # Ensure directories exist
   systemd.tmpfiles.rules = [

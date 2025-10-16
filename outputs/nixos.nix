@@ -1,4 +1,10 @@
-{ inputs, lib, pkgs, pkgs-stable, ... }:
+{
+  inputs,
+  lib,
+  pkgs,
+  pkgs-stable,
+  ...
+}:
 let
 
   # Host Config
@@ -6,27 +12,32 @@ let
     inherit hostname addr username;
   };
 
-  wNode = hostname: addr: username: 
-    (cConfig hostname addr username) // {
+  wNode =
+    hostname: addr: username:
+    (cConfig hostname addr username)
+    // {
       mode = "worker";
       service = "docker";
     };
 
-  mNode = hostname: addr: username:
-    (cConfig hostname addr username) // {
+  mNode =
+    hostname: addr: username:
+    (cConfig hostname addr username)
+    // {
       mode = "manager";
       service = "docker";
     };
 
-  sNode = hostname: addr: username:
-    (cConfig hostname addr username) //
-    {
+  sNode =
+    hostname: addr: username:
+    (cConfig hostname addr username)
+    // {
       mode = "storage";
       service = "storage";
     };
 
   # Docker Hosts
-  dockerHosts = [ 
+  dockerHosts = [
     (mNode "dock01" "10.0.1.30" "whale")
     (wNode "dock02" "10.0.1.31" "whale")
     (wNode "dock03" "10.0.1.32" "whale")
@@ -37,13 +48,14 @@ let
     (mNode "dock08" "10.0.1.38" "whale")
   ];
 
-  storageHosts = [ 
+  storageHosts = [
     (sNode "storage01" "10.0.1.10" "hoarder")
   ];
 
   allHosts = dockerHosts ++ storageHosts;
 
-in {
+in
+{
   nixosConfigurations = builtins.listToAttrs (
     map (host: {
       name = host.hostname;

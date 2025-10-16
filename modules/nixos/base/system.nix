@@ -1,4 +1,5 @@
-{ config, pkgs, ... }: {
+{ config, pkgs, ... }:
+{
   # imports = [ inputs.nix-gaming.nixosModules.default ];
   nix = {
     settings = {

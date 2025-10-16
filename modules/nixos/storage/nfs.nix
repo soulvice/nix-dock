@@ -1,4 +1,9 @@
-{ config, pkgs, lib, ... }:
+{
+  config,
+  pkgs,
+  lib,
+  ...
+}:
 
 {
   # NFS Server Settings
@@ -13,8 +18,16 @@
   };
 
   # NFS Server firewall ports
-  networking.firewall.allowedTCPPorts = [ 2049 111 20048 ];
-  networking.firewall.allowedUDPPorts = [ 2049 111 20048 ];
+  networking.firewall.allowedTCPPorts = [
+    2049
+    111
+    20048
+  ];
+  networking.firewall.allowedUDPPorts = [
+    2049
+    111
+    20048
+  ];
   networking.firewall.checkReversePath = "loose";
 
   # NFS performance kernel parameters

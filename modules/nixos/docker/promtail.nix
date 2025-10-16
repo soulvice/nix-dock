@@ -1,8 +1,10 @@
-{ config, lib, ... }: let
+{ config, lib, ... }:
+let
 
   cfg = config.modules.metrics.promtail;
 
-in{
+in
+{
 
   config = lib.mkIf (cfg.enable) {
     # Docker containers with service discovery
@@ -51,7 +53,10 @@ in{
 
     # Allow access for promtail to read docker.socket
     systemd.services.promtail.serviceConfig = {
-      ReadOnlyPaths = [ "/var/lib/docker/containers" "/var/run/docker.sock" ];
+      ReadOnlyPaths = [
+        "/var/lib/docker/containers"
+        "/var/run/docker.sock"
+      ];
       SupplementaryGroups = [ "docker" ];
     };
   };

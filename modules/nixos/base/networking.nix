@@ -1,4 +1,10 @@
-{ config, lib, pkgs, hostname, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  hostname,
+  ...
+}:
 
 {
   # Hostname from parameter
@@ -16,7 +22,7 @@
   networking.firewall = {
     enable = true;
     allowedTCPPorts = [
-      22    # SSH
+      22 # SSH
     ];
   };
 }

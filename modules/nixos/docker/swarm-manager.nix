@@ -1,24 +1,34 @@
-{ config, lib, pkgs, system-hosts, hostname, ... }: with lib; let
+{
+  config,
+  lib,
+  pkgs,
+  system-hosts,
+  hostname,
+  ...
+}:
+with lib;
+let
   cfg = config.modules.docker.swarm-manager;
 
   # Generate list of other manager nodes from system-hosts
   # Only include hosts with service = "docker" and mode = "manager", excluding current host
-  otherManagers = builtins.filter
-    (host: host.service == "docker" && host.mode == "manager" && host.hostname != hostname)
-    system-hosts;
+  otherManagers = builtins.filter (
+    host: host.service == "docker" && host.mode == "manager" && host.hostname != hostname
+  ) system-hosts;
 
   # Format as "addr:port" strings
-  managerAddresses = map
-    (host: "${host.addr}:${toString cfg.port}")
-    otherManagers;
+  managerAddresses = map (host: "${host.addr}:${toString cfg.port}") otherManagers;
 
   # Join with commas for environment variable
   swarmManagersEnv = builtins.concatStringsSep "," managerAddresses;
 
-in {
+in
+{
   # Options ===================
   options.modules.docker.swarm-manager = {
-    enable = mkEnableOption "Enable Docker Swarm Token API Service" // { default = false; };
+    enable = mkEnableOption "Enable Docker Swarm Token API Service" // {
+      default = false;
+    };
     port = mkOption {
       type = types.port;
       default = 3535;
@@ -44,16 +54,22 @@ in {
     # SystemD service for the swarm token API (Python-based)
     systemd.services.docker-swarm-token-api = {
       description = "Docker Swarm Token Distribution Server";
-      after = [ "docker.service" "network-online.target" ];
+      after = [
+        "docker.service"
+        "network-online.target"
+      ];
       wants = [ "network-online.target" ];
       wantedBy = [ "multi-user.target" ];
-      path = [ pkgs.python3 pkgs.docker ];
+      path = [
+        pkgs.python3
+        pkgs.docker
+      ];
 
       serviceConfig = {
         Type = "simple";
         Restart = "always";
         RestartSec = "5s";
-        User = "root";  # Needs root for docker commands
+        User = "root"; # Needs root for docker commands
         ExecStart = "${pkgs.python3}/bin/python3 ${./swarm-token-server.py}";
       };
 
@@ -63,8 +79,8 @@ in {
         echo "Discovered managers: ${swarmManagersEnv}"
         echo "Manager count: ${toString (length otherManagers)}"
         echo "All system hosts:"
-        ${concatMapStringsSep "\n" (host:
-          "echo '  ${host.hostname} (${host.addr}) - ${host.mode}'"
+        ${concatMapStringsSep "\n" (
+          host: "echo '  ${host.hostname} (${host.addr}) - ${host.mode}'"
         ) system-hosts}
         echo "==========================================="
       '';
