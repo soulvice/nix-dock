@@ -87,7 +87,7 @@
       enable = true;
       port = 3535;
       interface = "0.0.0.0";
-    }
+    };
   };
 
   # Hostname (unique per host)
