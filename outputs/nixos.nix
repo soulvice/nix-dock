@@ -6,16 +6,26 @@ let
     inherit hostname addr username;
   };
 
+  wNode = hostname: addr: username: = 
+    (cConfig hostname addr username) // {
+      mode = "worker";
+    };
+
+  mNode = hostname: addr: username: =
+    (cConfig hostname addr username) // {
+      mode = "manager";
+    };
+
   # Docker Hosts
   dockerHosts = [ 
-    (cConfig "dock01" "10.0.1.30" "whale")
-    (cConfig "dock02" "10.0.1.31" "whale")
-    (cConfig "dock03" "10.0.1.32" "whale")
-    (cConfig "dock04" "10.0.1.33" "whale")
-    (cConfig "dock05" "10.0.1.34" "whale")
-    (cConfig "dock06" "10.0.1.35" "whale")
-    (cConfig "dock07" "10.0.1.37" "whale")
-    (cConfig "dock08" "10.0.1.38" "whale")
+    (mNode "dock01" "10.0.1.30" "whale")
+    (wNode "dock02" "10.0.1.31" "whale")
+    (wNode "dock03" "10.0.1.32" "whale")
+    (wNode "dock04" "10.0.1.33" "whale")
+    (wNode "dock05" "10.0.1.34" "whale")
+    (wNode "dock06" "10.0.1.35" "whale")
+    (mNode "dock07" "10.0.1.37" "whale")
+    (mNode "dock08" "10.0.1.38" "whale")
   ];
 
   storageHosts = [ 
