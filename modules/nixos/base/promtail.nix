@@ -40,6 +40,14 @@ in
         clients = [
           {
             url = cfg.url;
+	    timeout = "30s";
+	    batchwait = "5s";
+	    batchsize = 1048576;
+            backoff_config = {
+	      min_period = "500ms";
+	      max_period = "5m";
+	      max_retries = 10;
+	    };
           }
         ];
 
@@ -86,6 +94,24 @@ in
             };
           }
         ];
+      };
+    };
+
+    # Promtail might be starting before DNS is fully started
+    systemd.services.promtail = with lib; {
+      after = [ "network-online.target" "nss-lookup.target" ];
+      wants = [ "network-online.target" ];
+      requires = [ "nss-lookup.target" ];
+      
+      serviceConfig = {
+        Restart = mkForce "on-failure";
+        RestartSec = mkForce "10s";
+        TimeoutStartSec = mkForce "90s";
+        TimeoutStopSec = mkForce "30s";  # Fix the timeout on stop issue
+        
+        # Network access
+        PrivateNetwork = mkForce false;
+        RestrictAddressFamilies = mkForce [ "AF_INET" "AF_INET6" "AF_UNIX" ];
       };
     };
 

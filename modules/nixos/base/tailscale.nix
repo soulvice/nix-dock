@@ -16,6 +16,7 @@
       "--hostname=${hostname}"
       "--ssh"
       "--accept-routes"
+      "--accept-dns=false"
     ];
     interfaceName = "tailscale0";
     disableTaildrop = true;

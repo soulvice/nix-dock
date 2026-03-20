@@ -14,22 +14,31 @@
     useDHCP = lib.mkDefault false;
 
     timeServers = [ "10.0.0.1" ];
-
-    nameservers = if hostname == "dock01" then [ "127.0.0.1" ] else [ "10.0.0.1" ];
+	
+    # Was just 127.0.0.1
+    nameservers = if hostname == "dock01" then [ "10.0.1.2" "1.1.1.1" ] else [ "10.0.0.1" ];
 
     firewall = {
       enable = true;
       allowedTCPPorts = [ 22 ];
     };
+    #resolveconf.useLocalresolver = lib.mkIf (hostname == "dock01") true;
   };
 
-  services.resolved = {
-    enable = true;
-    dnssec = "false";
+  #services.resolved.enable = if hostname == "dock01" then false else true;
+  services.resolved = lib.mkIf (hostname != "dock01") {
+    dnssec = lib.mkIf (hostname != "dock01") "false";
     extraConfig = ''
-      ${if hostname == "dock01" then "DNS=127.0.0.1" else "DNS=10.0.0.1"}
-      FallbackDNS=100.100.100.100
-      DNSStubListener=no
+      DNS=10.0.1.2
+      FallbackDNS=1.1.1.1 1.0.0.1
+      DNSStubListener=yes
     '';
   };
+  services.avahi = {
+    enable = true;
+    reflector = true;
+    openFirewall = true;
+    interfaces = [ "ens18" "ens19" "docker0" ];  # adjust interface names to match yours
+  };
+
 }
