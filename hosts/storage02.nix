@@ -51,7 +51,7 @@
   #};
 
   # -- MERGERFS --
-  environment.packages = with pkgs; [
+  environment.systemPackages = with pkgs; [
     mergerfs
     snapraid
     smartmontools
