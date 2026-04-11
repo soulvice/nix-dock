@@ -38,18 +38,26 @@ let
 
   # Docker Hosts
   dockerHosts = [
-    (mNode "dock01" "10.0.1.30" "whale")
-    (wNode "dock02" "10.0.1.31" "whale")
-    (wNode "dock03" "10.0.1.32" "whale")
-    (wNode "dock04" "10.0.1.33" "whale")
-    (wNode "dock05" "10.0.1.34" "whale")
-    (wNode "dock06" "10.0.1.35" "whale")
-    (mNode "dock07" "10.0.1.37" "whale")
-    (mNode "dock08" "10.0.1.38" "whale")
+    # Core Docker Swarm Nodes
+    (mNode "dock01" "10.0.1.30" "whale") # Manager
+    (wNode "dock02" "10.0.1.31" "whale") # Worker + GPU
+    (wNode "dock03" "10.0.1.32" "whale") # Worker
+    (wNode "dock04" "10.0.1.33" "whale") # Worker
+    (wNode "dock05" "10.0.1.34" "whale") # Worker
+    (wNode "dock06" "10.0.1.35" "whale") # Worker
+    (mNode "dock07" "10.0.1.37" "whale") # Manager
+    (mNode "dock08" "10.0.1.38" "whale") # Manager
+
+    # ex-unraid server
+    (mNode "dock09" "10.0.1.39" "whale") # Manager
+    (mNode "dock10" "10.0.1.40" "whale") # Worker + GPU
+    (mNode "dock11" "10.0.1.41" "whale") # Worker
+    (mNode "dock12" "10.0.1.42" "whale") # Worker
   ];
 
   storageHosts = [
-    (sNode "storage01" "10.0.1.10" "hoarder")
+    (sNode "storage01" "10.0.1.10" "hoarder") # Docker Compose Storage
+    (sNode "storage02" "10.0.1.11" "hoarder") # Media Storage
   ];
 
   allHosts = dockerHosts ++ storageHosts;

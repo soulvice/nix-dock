@@ -1,7 +1,6 @@
-{ pkgs, ... }:
+{ config, pkgs, lib, ... }:
 {
-  environment.systemPackages = with pkgs; [
-    # System Monitors
+  environment.systemPackages = with pkgs; lib.mkMerge [
 
   ];
 }

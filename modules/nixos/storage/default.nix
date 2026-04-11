@@ -6,5 +6,6 @@
     ./metrics.nix
     ./promtail.nix
     ./users.nix
+    ./snapraid.nix
   ];
 }
