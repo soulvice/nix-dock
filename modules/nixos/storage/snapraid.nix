@@ -1,7 +1,7 @@
 { config, pkgs, lib, ... }: let
 
 in {
-  config = (lib.mkIf config.networking.hostName == "storage02") {
+  config = lib.mkIf (config.networking.hostName == "storage02") {
     services.snapraid = {
       enable = true;
 
