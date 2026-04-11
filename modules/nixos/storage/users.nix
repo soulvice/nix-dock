@@ -11,8 +11,8 @@
     ];
     hashedPassword = "!";
     createHome = true;
-    openssh.authorizedKeys.keyFiles = [
-      "${config.age.secrets.ssh-key-storage.path}"
-    ];
+    #openssh.authorizedKeys.keyFiles = [
+    #  "${config.age.secrets.ssh-key-storage.path}"
+    #];
   };
 }
