@@ -36,16 +36,16 @@ in {
         device = "/dev/sda";
         type = "disk";
         content = {
-          type = "gpt";
+          type = "mbrTable";
           partitions = {
             inherit root;
 
             # -- Boot Device --
-            boot = {
-              size = "256M";
-              type = "EF02"; # for grub MBR
-              attributes = [ 0 ]; # partition attribute
-            };
+            #boot = {
+            #  size = "256M";
+            #  type = "EF02"; # for grub MBR
+            #  attributes = [ 0 ]; # partition attribute
+            #};
 
           };
         };
