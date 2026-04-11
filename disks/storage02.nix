@@ -41,11 +41,8 @@ in {
             inherit root;
 
             # -- Boot Device --
-            boot = {
-              size = "1M";
-              type = "EF02"; # for grub MBR
-            };
             ESP = {
+              label = "boot";
               name = "ESP";
               size = "512M";
               type = "EF00";
@@ -53,7 +50,9 @@ in {
                 type = "filesystem";
                 format = "vfat";
                 mountpoint = "/boot";
-                mountOptions = [ "umask=0077" ];
+                mountOptions = [
+                  "defaults"
+                ];
               };
             };
           };

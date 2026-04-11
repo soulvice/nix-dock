@@ -41,11 +41,20 @@ in {
             inherit root;
 
             # -- Boot Device --
-            #boot = {
-            #  size = "256M";
-            #  type = "EF02"; # for grub MBR
-            #  attributes = [ 0 ]; # partition attribute
-            #};
+            ESP = {
+              label = "boot";
+              name = "ESP";
+              size = "512M";
+              type = "EF00";
+              content = {
+                type = "filesystem";
+                format = "vfat";
+                mountpoint = "/boot";
+                mountOptions = [
+                  "defaults"
+                ];
+              };
+            };
           };
         };
       };
