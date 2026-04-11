@@ -156,8 +156,8 @@
   # ========================================
   # MODULE CONFIGURATION
   # ========================================
-  secrets.preservation = false;
-  secrets.storage = true;
+  module.secrets.preservation = false;
+  module.secrets.storage = true;
 
   modules.metrics = {
     prometheus = {
