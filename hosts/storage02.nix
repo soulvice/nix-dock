@@ -3,6 +3,7 @@
   lib,
   pkgs,
   modulesPath,
+  inputs,
   ...
 }:
 
@@ -12,6 +13,7 @@
     ../modules/nixos/base
     ../modules/nixos/storage
     ../secrets/secrets.nix
+    inputs.disko.nixosModules.default
   ];
 
   # ========================================
