@@ -42,17 +42,13 @@ in {
 
             # -- Boot Device --
             ESP = {
-              label = "boot";
-              name = "ESP";
-              size = "512M";
               type = "EF00";
+              size = "500M";
               content = {
                 type = "filesystem";
                 format = "vfat";
                 mountpoint = "/boot";
-                mountOptions = [
-                  "defaults"
-                ];
+                mountOptions = [ "umask=0077" ];
               };
             };
           };
