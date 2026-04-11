@@ -36,7 +36,7 @@ in {
         device = "/dev/sda";
         type = "disk";
         content = {
-          type = "mbrTable";
+          type = "mbr";
           partitions = {
             inherit root;
 

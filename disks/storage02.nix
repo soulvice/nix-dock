@@ -36,17 +36,26 @@ in {
         device = "/dev/sda";
         type = "disk";
         content = {
-          type = "mbrTable";
+          type = "gpt";
           partitions = {
             inherit root;
 
             # -- Boot Device --
-            #boot = {
-            #  size = "256M";
-            #  type = "EF02"; # for grub MBR
-            #  attributes = [ 0 ]; # partition attribute
-            #};
-
+            boot = {
+              size = "1M";
+              type = "EF02"; # for grub MBR
+            };
+            ESP = {
+              name = "ESP";
+              size = "512M";
+              type = "EF00";
+              content = {
+                type = "filesystem";
+                format = "vfat";
+                mountpoint = "/boot";
+                mountOptions = [ "umask=0077" ];
+              };
+            };
           };
         };
       };
