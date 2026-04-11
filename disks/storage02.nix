@@ -41,22 +41,10 @@ in {
             inherit root;
 
             # -- Boot Device --
-            ESP = {
-              priority = 1;
-              name = "ESP";
-              start = "1M";
-              end = "450M";
-              type = "EF00";
-              content = {
-                type = "filesystem";
-                format = "vfat";
-                mountpoint = "/boot";
-                mountOptions = [
-                  "fmask=0177" # File mask: 777-177=600 (Owner: rw-, Group/Others: ---)
-                  "dmask=0077" # Directory mask: 777-077=700 (Owner: rwx, Group/Others: ---)
-                  "noexec,nosuid,nodev" # Security: Block execution, ignore setuid, and disable device nodes
-                ];
-              };
+            boot = {
+              size = "256M";
+              type = "EF02"; # for grub MBR
+              attributes = [ 0 ]; # partition attribute
             };
 
           };
