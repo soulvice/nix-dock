@@ -14,7 +14,7 @@
     ../modules/nixos/storage
     ../secrets/secrets.nix
     inputs.disko.nixosModules.default
-    ../disko.nix
+    ../disks/storage02.nix
   ];
 
   # ========================================
