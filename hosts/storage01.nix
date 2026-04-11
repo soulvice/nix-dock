@@ -3,6 +3,7 @@
   lib,
   pkgs,
   modulesPath,
+  inputs,
   ...
 }:
 
@@ -12,6 +13,8 @@
     ../modules/nixos/base
     ../modules/nixos/storage
     ../secrets/secrets.nix
+    inputs.disko.nixosModules.default
+    ../disko.nix
   ];
 
   # ========================================
@@ -76,8 +79,8 @@
   # ========================================
   # MODULE CONFIGURATION
   # ========================================
-  secrets.preservation = false;
-  secrets.storage = true;
+  modules.secrets.preservation.enable = false;
+  modules.secrets.storage.enable = true;
 
   modules.metrics = {
     prometheus = {
