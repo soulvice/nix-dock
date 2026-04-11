@@ -148,11 +148,11 @@
   # HOST-SPECIFIC CONFIGURATION
   # ========================================
   # Bootloader for BIOS
-  boot.loader.grub = {
-    enable = true;
-    device = "/dev/sda";
-      mirroredBoots = [];    # explicitly empty, or just omit it entirely
-  };
+  #boot.loader.grub = {
+  #  enable = true;
+  #  device = "/dev/sda";
+  #    mirroredBoots = [];    # explicitly empty, or just omit it entirely
+  #};
 
   # ========================================
   # MODULE CONFIGURATION
