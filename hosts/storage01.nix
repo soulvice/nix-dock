@@ -29,23 +29,23 @@
   boot.kernelModules = [ ];
   boot.extraModulePackages = [ ];
 
-  fileSystems."/" = {
-    device = "/dev/disk/by-uuid/6afb697a-6bac-4f7e-996d-de05c41c6871";
-    fsType = "btrfs";
-    options = [ "subvol=@root" ];
-  };
-
-  fileSystems."/home" = {
-    device = "/dev/disk/by-uuid/6afb697a-6bac-4f7e-996d-de05c41c6871";
-    fsType = "btrfs";
-    options = [ "subvol=@home" ];
-  };
-
-  fileSystems."/nix" = {
-    device = "/dev/disk/by-uuid/6afb697a-6bac-4f7e-996d-de05c41c6871";
-    fsType = "btrfs";
-    options = [ "subvol=@nix" ];
-  };
+  #fileSystems."/" = {
+  #  device = "/dev/disk/by-uuid/6afb697a-6bac-4f7e-996d-de05c41c6871";
+  #  fsType = "btrfs";
+  #  options = [ "subvol=@root" ];
+  #};
+#
+  #fileSystems."/home" = {
+  #  device = "/dev/disk/by-uuid/6afb697a-6bac-4f7e-996d-de05c41c6871";
+  #  fsType = "btrfs";
+  #  options = [ "subvol=@home" ];
+  #};
+#
+  #fileSystems."/nix" = {
+  #  device = "/dev/disk/by-uuid/6afb697a-6bac-4f7e-996d-de05c41c6871";
+  #  fsType = "btrfs";
+  #  options = [ "subvol=@nix" ];
+  #};
 
   # Override the default storage filesystem configuration
   fileSystems."/data/store01" = {
