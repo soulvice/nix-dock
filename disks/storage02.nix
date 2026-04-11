@@ -41,15 +41,9 @@ in {
             inherit root;
 
             # -- Boot Device --
-            ESP = {
-              type = "EF00";
-              size = "500M";
-              content = {
-                type = "filesystem";
-                format = "vfat";
-                mountpoint = "/boot";
-                mountOptions = [ "umask=0077" ];
-              };
+            boot = {
+              size = "1M";
+              type = "EF02";
             };
           };
         };
