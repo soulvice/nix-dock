@@ -151,6 +151,7 @@
   boot.loader.grub = {
     enable = true;
     device = "/dev/sda";
+      mirroredBoots = [];    # explicitly empty, or just omit it entirely
   };
 
   # ========================================
