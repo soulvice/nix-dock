@@ -12,6 +12,7 @@
     (lib.mkIf (config.networking.hostName == "storage01") {
       services.nfs.server = {
         enable = true;
+        mountdPort = 20048;
         exports = ''
           /data/store01/frigate *(rw,insecure,sync,no_subtree_check,no_root_squash)
           /data/store01/photos *(rw,insecure,sync,no_subtree_check,no_root_squash)
@@ -43,10 +44,11 @@
     (lib.mkIf (config.networking.hostName == "storage02") {
       services.nfs.server = {
         enable = true;
+        mountdPort = 20048;
         exports = ''
-          /data-pool/Media *(rw,insecure,sync,no_subtree_check,no_root_squash)
-          /data-pool/drop *(rw,insecure,sync,no_subtree_check,no_root_squash)
-          /data-pool/shared *(rw,insecure,sync,no_subtree_check,no_root_squash)
+          /data-pool/Media *(rw,insecure,sync,no_subtree_check,no_root_squash,fsid=1)
+          /data-pool/drop *(rw,insecure,sync,no_subtree_check,no_root_squash,fsid=2)
+          /data-pool/shared *(rw,insecure,sync,no_subtree_check,no_root_squash,fsid=3)
         '';
       };
     })
