@@ -33,8 +33,8 @@ in {
       enable = true;
 
       parityFiles = [
-        "/dev/disk/by-id/ata-ST10000NE0008-2JM101_ZHZ2R1RT.snapraid.parity"
-        "/dev/disk/by-id/ata-WDC_WD101EFAX-68LDBN0_VCG8UPSP.snapraid.parity"
+        "/dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK_ZHZ2R1RT-part1.snapraid.parity"
+        "/dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK_VCG8UPSP-part1.snapraid.parity"
       ];
 
       contentFiles = [
