@@ -13,6 +13,7 @@
     useRoutingFeatures = "both";
     openFirewall = true;
     extraSetFlags = [
+      "--reset"
       "--hostname=${hostname}"
       "--ssh"
       "--accept-routes"

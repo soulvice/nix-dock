@@ -38,7 +38,11 @@
     enable = true;
     reflector = true;
     openFirewall = true;
-    interfaces = [ "ens18" "ens19" "docker0" ];  # adjust interface names to match yours
+    interfaces = [
+      "ens18"
+    ] ++ lib.optionals
+      (lib.hasPrefix "dock" config.networking.hostName)
+      [ "ens19" "docker0" ];
   };
 
 }
