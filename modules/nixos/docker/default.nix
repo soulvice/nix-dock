@@ -8,5 +8,6 @@
     ./users.nix
     ./networking.nix
     ./swarm-manager.nix
+    ./gh-runner.nix
   ];
 }
