@@ -25,6 +25,12 @@ let
             "compress-force=zstd:1" # Save space and reduce I/O on SSD
           ];
         };
+        "@docker" = {
+          mountpoint = "/var/lib/docker";
+          mountOptions = [
+            "compress-force=zstd:1" # Save space and reduce I/O on SSD
+          ];
+        };
       };
     };
   };
@@ -32,11 +38,11 @@ let
 in {
   disko.devices = {
     disk = {
-      storage01 = {
+      dock09 = {
         device = "/dev/sda";
         type = "disk";
         content = {
-          type = "gpt";
+          type = "mbr";
           partitions = {
             inherit root;
 

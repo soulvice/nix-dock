@@ -27,6 +27,10 @@ let
     mode = "0500";
     owner = username;
   };
+  gh-runner = {
+    mode = "0500";
+    owner = "github-runner-default";
+  };
 in
 {
   imports = [
@@ -37,6 +41,7 @@ in
     docker.enable = mkEnableOption "NixOS Secrets for Docker Servers";
     storage.enable = mkEnableOption "NixOS Secrets for Storage Servers";
     preservation.enable = mkEnableOption "whether use preservation and ephemeral root file system";
+    runners.enable = mkEnableOption "Enable Github Runners";
   };
 
   config = mkIf (enabledServerSecrets) (mkMerge [
@@ -124,6 +129,14 @@ in
         authorizedKeysFiles = lib.mkForce [
           "/etc/ssh/authorized_keys.d/%u"
         ];
+      };
+    })
+
+    (mkIf cfg.runners.enable {
+      age.secrets = {
+        "github-runner" = {
+          file = "${mysecrets}/github-runner.age";
+        } // gh-runner;
       };
     })
 

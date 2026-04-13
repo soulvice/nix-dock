@@ -49,10 +49,10 @@ let
     (mNode "dock08" "10.0.1.38" "whale") # Manager
 
     # ex-unraid server
-    (mNode "dock09" "10.0.1.39" "whale") # Manager
-    (mNode "dock10" "10.0.1.40" "whale") # Worker + GPU
+    (mNode "dock09" "10.0.1.39" "whale") # Worker + GPU
+    (mNode "dock10" "10.0.1.40" "whale") # Worker
     (mNode "dock11" "10.0.1.41" "whale") # Worker
-    (mNode "dock12" "10.0.1.42" "whale") # Worker
+    (mNode "dock12" "10.0.1.42" "whale") # Manager
   ];
 
   storageHosts = [
