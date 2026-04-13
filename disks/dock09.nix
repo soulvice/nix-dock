@@ -42,7 +42,7 @@ in {
         device = "/dev/sda";
         type = "disk";
         content = {
-          type = "mbr";
+          type = "gpt";
           partitions = {
             inherit root;
 
