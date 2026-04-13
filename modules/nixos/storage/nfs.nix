@@ -85,13 +85,6 @@
         notifications.wall.enable = true;
       };
 
-      # Additional NFS collector for Prometheus
-      services.prometheus.exporters.node.enabledCollectors = [
-        "nfs"
-        "nfsd"
-        "mountstats"
-      ];
-
       # System packages for storage management
       environment.systemPackages = with pkgs; [
         xfsprogs
