@@ -30,6 +30,7 @@ in {
 
       # Add runner to docker group so it can call docker without owning directories
       users.users.github-runner-default.isSystemUser = true;
+      users.users.github-runner-default.group = "github-runner-default";
       users.users.github-runner-default.extraGroups = [ "docker" ];
     })
   ];
