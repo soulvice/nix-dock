@@ -9,8 +9,10 @@ in {
   config = lib.mkMerge [
     (lib.mkIf (cfg.enable) {
       services.github-runners = {
-        instances.default = {
+        default = {
           enable = true;
+          user = "whale";
+          ephemeral = true;
           url = "https://github.com/soulvice/LimeWire";
           tokenFile = "${config.age.secrets."github-runner".path}";
           name = config.networking.hostName;
