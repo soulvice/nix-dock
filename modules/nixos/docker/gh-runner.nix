@@ -8,7 +8,7 @@ in {
 
   config = lib.mkMerge [
     (lib.mkIf (cfg.enable) {
-      services.github-runner = {
+      services.github-runners = {
         instances.default = {
           enable = true;
           url = "https://github.com/soulvice/LimeWire";
