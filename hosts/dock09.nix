@@ -44,7 +44,7 @@
     docker.enable = true;
   };
 
-  modules.runners.enable = true;
+  modules.runner.enable = true;
 
   modules.metrics = {
     prometheus = {
