@@ -11,8 +11,8 @@ in {
       services.github-runners = {
         default = {
           enable = true;
-          user = "whale";
-          group = "users";
+          user = "github-runner-default";
+          group = "github-runner-default";
           ephemeral = true;
           url = "https://github.com/soulvice/LimeWire";
           tokenFile = "${config.age.secrets."github-runner".path}";
@@ -29,6 +29,7 @@ in {
       };
 
       # Add runner to docker group so it can call docker without owning directories
+      users.users.github-runner-default.isSystemUser = true;
       users.users.github-runner-default.extraGroups = [ "docker" ];
     })
   ];
