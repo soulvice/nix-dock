@@ -25,6 +25,10 @@ in {
             rsync
             jq
             git
+            gawk        # ← awk
+            gnugrep     # ← grep
+            coreutils   # ← cp, mkdir, chmod etc.
+            bash
           ];
           serviceOverrides = {
             ReadWritePaths = [ "/docker" "/tmp" ];
