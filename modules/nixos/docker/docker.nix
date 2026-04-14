@@ -50,14 +50,26 @@ in
   config = mkMerge [
     # Setup Docker Folders
     {
-      systemd.tmpfiles.rules = [
-        "d /docker 0755 root root -"
-        "d /docker/services.d 0755 whale docker -"
-        "d /docker/logs.d 0755 whale docker -"
-        "d /docker/shared.d 0755 whale docker -"
-        "d /docker/backups.d 0755 whale docker -"
-        "d /docker/local.d 0755 whale docker -"
-      ];
+      #systemd.tmpfiles.rules = [
+      #  "d /docker 0755 root root -"
+      #  "d /docker/services.d 0755 whale docker -"
+      #  "d /docker/logs.d 0755 whale docker -"
+      #  "d /docker/shared.d 0755 whale docker -"
+      #  "d /docker/backups.d 0755 whale docker -"
+      #  "d /docker/local.d 0755 whale docker -"
+      #];
+
+      system.activationScripts.dockerDirs = {
+        text = ''
+          mkdir -p /docker/{services.d,logs.d,shared.d,backups.d,local.d,appdata.d}
+          chown whale:docker /docker/{services.d,logs.d,shared.d,backups.d,local.d,appdata.d}
+          chmod 0775 /docker/{services.d,logs.d,shared.d,backups.d,local.d,appdata.d}
+          chmod 0755 /docker
+          chown root:root /docker
+        '';
+        deps = [];
+      };
+
     }
 
     # Docker service
