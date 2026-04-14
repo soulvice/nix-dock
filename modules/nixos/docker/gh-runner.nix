@@ -29,6 +29,7 @@ in {
             gnugrep     # ← grep
             coreutils   # ← cp, mkdir, chmod etc.
             bash
+            curl
           ];
           serviceOverrides = {
             ReadWritePaths = [ "/docker" "/tmp" ];
