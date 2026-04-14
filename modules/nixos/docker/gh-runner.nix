@@ -12,6 +12,7 @@ in {
         default = {
           enable = true;
           user = "whale";
+          group = "users";
           ephemeral = true;
           url = "https://github.com/soulvice/LimeWire";
           tokenFile = "${config.age.secrets."github-runner".path}";
