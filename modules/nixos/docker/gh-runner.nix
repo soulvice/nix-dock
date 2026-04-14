@@ -25,6 +25,10 @@ in {
             jq
             git
           ];
+          serviceOverrides = {
+            ReadWritePaths = [ "/docker" "/tmp" ];
+            ProtectSystem  = lib.mkForce "full";   # downgrade from strict
+          };
         };
       };
 
