@@ -42,6 +42,7 @@
   modules.secrets = {
     preservation.enable = false;
     docker.enable = true;
+    runners.enable = true;
   };
 
   modules.runner.enable = true;
