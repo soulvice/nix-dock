@@ -42,8 +42,9 @@
   modules.secrets = {
     preservation.enable = false;
     docker.enable = true;
-    runners.enable = true;
   };
+
+  modules.runners.enable = true;
 
   modules.metrics = {
     prometheus = {
