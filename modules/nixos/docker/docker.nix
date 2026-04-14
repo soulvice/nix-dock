@@ -48,8 +48,20 @@ in
   };
 
   config = mkMerge [
+    # Setup Docker Folders
     {
-      # Docker service
+      systemd.tmpfiles.rules = [
+        "d /docker 0755 root root -"
+        "d /docker/services.d 0755 whale docker -"
+        "d /docker/logs.d 0755 whale docker -"
+        "d /docker/shared.d 0755 whale docker -"
+        "d /docker/backups.d 0755 whale docker -"
+        "d /docker/local.d 0755 whale docker -"
+      ];
+    }
+
+    # Docker service
+    {
       virtualisation.docker = {
         enable = true;
         enableOnBoot = true;

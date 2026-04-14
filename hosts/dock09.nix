@@ -11,7 +11,6 @@
   imports = [
     (modulesPath + "/profiles/qemu-guest.nix")
     ../secrets/secrets.nix
-
     ../modules/nixos/base
     ../modules/nixos/docker
     inputs.disko.nixosModules.default
@@ -43,7 +42,7 @@
   modules.secrets = {
     preservation.enable = false;
     docker.enable = true;
-    runners.enable = false;
+    runners.enable = true;
   };
 
   modules.metrics = {
