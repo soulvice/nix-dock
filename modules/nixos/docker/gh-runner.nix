@@ -11,6 +11,7 @@ in {
       services.github-runners = {
         default = {
           enable = true;
+          replace = true;
           user = "github-runner-default";
           group = "github-runner-default";
           ephemeral = true;
