@@ -12,8 +12,8 @@ in {
         default = {
           enable = true;
           replace = true;
-          user = "github-runner-default";
-          group = "github-runner-default";
+          user = "whale";
+          group = "docker";
           ephemeral = true;
           url = "https://github.com/soulvice/LimeWire";
           tokenFile = "${config.age.secrets."github-runner".path}";
