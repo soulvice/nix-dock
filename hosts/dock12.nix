@@ -14,7 +14,7 @@
     ../modules/nixos/base
     ../modules/nixos/docker
     inputs.disko.nixosModules.default
-    ../disks/dock11.nix
+    ../disks/dock12.nix
   ];
 
   # ========================================
