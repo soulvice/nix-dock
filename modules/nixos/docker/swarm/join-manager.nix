@@ -41,7 +41,7 @@ in
       continue
     })
 
-    MANAGER_TOKEN=$(echo "$API_RESPONSE" | grep -o '"token":"[^"]*"' | cut -d'"' -f4)
+    MANAGER_TOKEN=$(echo "$API_RESPONSE" | jq -r '.token // empty')
 
     if [ -n "$MANAGER_TOKEN" ]; then
       WORKING_MANAGER="$MANAGER_IP"

@@ -186,6 +186,7 @@ in
             pkgs.docker
             pkgs.gnugrep
             pkgs.curl
+            pkgs.jq
           ];
           serviceConfig = {
             Type = "oneshot";

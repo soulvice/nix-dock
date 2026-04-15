@@ -34,14 +34,13 @@ in
         continue
       fi
 
-      # Retrieve worker token from manager API
       echo "Retrieving worker token from manager API at $MANAGER_IP..."
-      API_RESPONSE=$(curl -s --connect-timeout 10 --max-time 30 "http://$MANAGER_IP:${tokenServerPort}/swarm/worker" 2>/dev/null || {
+      if ! API_RESPONSE=$(curl -s --connect-timeout 10 --max-time 30 "http://$MANAGER_IP:${tokenServerPort}/swarm/worker"); then
         echo "ERROR: Failed to retrieve worker token from manager API at $MANAGER_IP:${tokenServerPort}"
         continue
-      })
+      fi
 
-      WORKER_TOKEN=$(echo "$API_RESPONSE" | grep -oP '"token":\s*"[^"]*"' | cut -d'"' -f4)
+      WORKER_TOKEN=$(echo "$API_RESPONSE" | jq -r '.token // empty')
 
       if [ -n "$WORKER_TOKEN" ]; then
         WORKING_MANAGER="$MANAGER_IP"
