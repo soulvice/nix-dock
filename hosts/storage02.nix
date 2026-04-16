@@ -76,7 +76,7 @@ in {
         "defaults"
         "allow_other"
         "use_ino"
-        "cache.files=off"
+        "cache.files=auto-full"
         "dropcacheonclose=true"
         "category.create=mfs"
         "minfreespace=20G"

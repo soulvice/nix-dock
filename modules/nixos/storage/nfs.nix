@@ -50,6 +50,8 @@
           /data-pool/drop *(rw,insecure,sync,no_subtree_check,no_root_squash,fsid=2)
           /data-pool/shared *(rw,insecure,sync,no_subtree_check,no_root_squash,fsid=3)
           /data-pool/backup *(rw,insecure,sync,no_subtree_check,no_root_squash,fsid=4)
+          # required for sabnzbd
+          /mnt/disk1/Media/downloads *(rw,insecure,sync,no_subtree_check,no_root_squash,fsid=5)
         '';
       };
     })
