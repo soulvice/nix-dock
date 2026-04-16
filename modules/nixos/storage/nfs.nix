@@ -46,10 +46,10 @@
         enable = true;
         mountdPort = 20048;
         exports = ''
-          /data-pool/Media *(rw,soft,insecure,sync,no_subtree_check,no_root_squash,softreval,timeo=150,retrans=3,fsid=1)
-          /data-pool/drop *(rw,soft,insecure,sync,no_subtree_check,no_root_squash,softreval,timeo=150,retrans=3,fsid=2)
-          /data-pool/shared *(rw,soft,insecure,sync,no_subtree_check,no_root_squash,softreval,timeo=150,retrans=3,fsid=3)
-          /data-pool/backup *(rw,soft,insecure,sync,no_subtree_check,no_root_squash,softreval,timeo=150,retrans=3,fsid=4)
+          /data-pool/Media *(rw,insecure,sync,no_subtree_check,no_root_squash,softreval,timeo=150,retrans=3,fsid=1)
+          /data-pool/drop *(rw,insecure,sync,no_subtree_check,no_root_squash,softreval,timeo=150,retrans=3,fsid=2)
+          /data-pool/shared *(rw,insecure,sync,no_subtree_check,no_root_squash,softreval,timeo=150,retrans=3,fsid=3)
+          /data-pool/backup *(rw,insecure,sync,no_subtree_check,no_root_squash,softreval,timeo=150,retrans=3,fsid=4)
         '';
       };
     })
