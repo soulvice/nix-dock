@@ -73,7 +73,7 @@ in {
       device  = lib.concatStringsSep ":" diskPaths;
       fsType  = "fuse.mergerfs";
       options = [
-        "defaults"
+#        "defaults"
         "allow_other"
         "use_ino"
         "cache.files=off"
