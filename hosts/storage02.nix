@@ -81,6 +81,7 @@ in {
         "category.create=mfs"
         "minfreespace=20G"
         "fsname=mergerfs"
+        "nfs_export=true"
       ];
       depends = diskPaths;
     };
