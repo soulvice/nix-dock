@@ -13,11 +13,14 @@
     useRoutingFeatures = "both";
     openFirewall = true;
     extraSetFlags = [
+      "--hostname=${config.networking.hostName}"
+      "--report-posture"
+    ];
+    extraUpFlags = [
       "--reset"
-      "--hostname=${hostname}"
-      "--ssh"
       "--accept-routes"
       "--accept-dns=false"
+      "--ssh"
     ];
     interfaceName = "tailscale0";
     disableTaildrop = true;

@@ -62,6 +62,27 @@
         "type": "github"
       }
     },
+    "disko": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1768920986,
+        "narHash": "sha256-CNzzBsRhq7gg4BMBuTDObiWDH/rFYHEuDRVOwCcwXw4=",
+        "owner": "nix-community",
+        "repo": "disko",
+        "rev": "de5708739256238fb912c62f03988815db89ec9a",
+        "type": "github"
+      },
+      "original": {
+        "owner": "nix-community",
+        "ref": "v1.13.0",
+        "repo": "disko",
+        "type": "github"
+      }
+    },
     "flake-compat": {
       "flake": false,
       "locked": {
@@ -142,10 +163,10 @@
     "mysecrets": {
       "flake": false,
       "locked": {
-        "lastModified": 1769864383,
-        "narHash": "sha256-GGeNAa40l7IC39sadoCAZLENMsqPFt1z0d0cfUWQaos=",
+        "lastModified": 1778492525,
+        "narHash": "sha256-6HQaDJT64Cncy91kE++1PE7ACPsARA+kyfN/dgJh4GE=",
         "ref": "main",
-        "rev": "60b0a75ddc038f60a6f2585828e4e2ae7a038a7d",
+        "rev": "3f9453039b9489d2b8d48fa60a7c70505ded57cc",
         "shallow": true,
         "type": "git",
         "url": "ssh://git@github.com/soulvice/nixdock-secrets.git"
@@ -267,6 +288,7 @@
     },
     "root": {
       "inputs": {
+        "disko": "disko",
         "mysecrets": "mysecrets",
         "nixpkgs": "nixpkgs",
         "nixpkgs-stable": "nixpkgs-stable",
