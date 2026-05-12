@@ -14,9 +14,16 @@
     useDHCP = lib.mkDefault false;
 
     timeServers = [ "10.0.0.1" ];
-	
+
     # Was just 127.0.0.1
-    nameservers = if hostname == "dock01" then [ "10.0.1.2" "1.1.1.1" ] else [ "10.0.0.1" ];
+    nameservers =
+      if hostname == "dock01" then
+        [
+          "10.0.1.2"
+          "1.1.1.1"
+        ]
+      else
+        [ "10.0.0.1" ];
 
     firewall = {
       enable = true;
@@ -35,14 +42,16 @@
     '';
   };
   services.avahi = {
-    enable = true;
+    enable = false;
     reflector = true;
     openFirewall = true;
     interfaces = [
       "ens18"
-    ] ++ lib.optionals
-      (lib.hasPrefix "dock" config.networking.hostName)
-      [ "ens19" "docker0" ];
+    ]
+    ++ lib.optionals (lib.hasPrefix "dock" config.networking.hostName) [
+      "ens19"
+      "docker0"
+    ];
   };
 
 }
