@@ -8,6 +8,9 @@ default:
 switch host:
     nixos-rebuild switch --flake .#{{host}}
 
+rebuild:
+    nixos-rebuild switch --flake .#$(hostname)
+
 [group('nix')]
 shell:
     nix develop .#default
