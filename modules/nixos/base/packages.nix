@@ -17,5 +17,7 @@
 
     # Editing
     vim
+
+    just
   ];
 }

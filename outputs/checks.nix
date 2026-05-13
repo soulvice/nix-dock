@@ -35,6 +35,11 @@ in
   # Development shell with pre-commit hooks
   devShells.x86_64-linux.default = pkgs.legacyPackages.x86_64-linux.mkShell {
     inherit (pre-commit) shellHook;
+
+    packages = with pkgs; [
+      bashInteractive
+    ];
+
     buildInputs = pre-commit.enabledPackages ++ [
       pkgs.legacyPackages.x86_64-linux.nixfmt-rfc-style
       pkgs.legacyPackages.x86_64-linux.nodePackages.prettier
