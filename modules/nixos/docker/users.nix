@@ -12,7 +12,7 @@
     ];
     hashedPassword = "!";
     createHome = true;
-    openssh.authorizedKeys.keys = [
+    openssh.authorizedKeys = [
       "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAICTEcf9PnQ1sOEPiU4KF3lhAeS6niTVw8bM6YyB0mvfK docker-host 2026-05"
     ];
   };
