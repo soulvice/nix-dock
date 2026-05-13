@@ -15,12 +15,12 @@
     extraSetFlags = [
       "--hostname=${config.networking.hostName}"
       "--report-posture"
+      "--ssh"
     ];
     extraUpFlags = [
       "--reset"
       "--accept-routes"
       "--accept-dns=false"
-      "--ssh"
     ];
     interfaceName = "tailscale0";
     disableTaildrop = true;
