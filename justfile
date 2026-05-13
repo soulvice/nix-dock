@@ -1,6 +1,6 @@
 
 
-set shell := [ "bash" "-c" ]
+set shell := [ "bash", "-c" ]
 
 default:
     @just --list
