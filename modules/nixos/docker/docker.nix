@@ -76,6 +76,7 @@ in
     {
       virtualisation.docker = {
         enable = true;
+        package = pkgs.docker_29;
         enableOnBoot = true;
         storageDriver = "btrfs";
         liveRestore = false;
@@ -183,7 +184,7 @@ in
           wantedBy = [ "multi-user.target" ];
           path = [
             pkgs.iproute2
-            pkgs.docker
+            pkgs.docker_29
             pkgs.gnugrep
             pkgs.curl
             pkgs.jq

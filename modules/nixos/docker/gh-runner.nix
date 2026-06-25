@@ -20,7 +20,7 @@ in {
           name = config.networking.hostName;
           extraLabels = [ config.networking.hostName "nixos" "docker" ];
           extraPackages = with pkgs; [
-            docker
+            docker_29
             docker-compose
             rsync
             jq

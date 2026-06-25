@@ -62,7 +62,7 @@ in
       wantedBy = [ "multi-user.target" ];
       path = [
         pkgs.python3
-        pkgs.docker
+        pkgs.docker_29
       ];
 
       serviceConfig = {
