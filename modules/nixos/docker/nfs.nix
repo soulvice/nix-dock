@@ -20,6 +20,8 @@ let
     "x-systemd.automount"
     "noauto"
   ];
+
+  enabled = false;
 in
 {
 
@@ -34,14 +36,15 @@ in
     }
     (lib.mkIf
       (
-        #(config.networking.hostName == "dock01") || 
-        (config.networking.hostName == "dock02") || 
-        (config.networking.hostName == "dock03") || 
-        (config.networking.hostName == "dock04") || 
-        (config.networking.hostName == "dock05") || 
-        (config.networking.hostName == "dock06") || 
-        (config.networking.hostName == "dock07") || 
-        (config.networking.hostName == "dock08")
+        #(config.networking.hostName == "dock01") ||
+        #(config.networking.hostName == "dock02") ||
+        #(config.networking.hostName == "dock03") ||
+        #(config.networking.hostName == "dock04") ||
+        #(config.networking.hostName == "dock05") ||
+        #(config.networking.hostName == "dock06") ||
+        #(config.networking.hostName == "dock07") ||
+        #(config.networking.hostName == "dock08")
+        enabled
       )
       {
         # Ensure directories exist

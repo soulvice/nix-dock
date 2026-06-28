@@ -5,45 +5,30 @@
   pkgs-stable,
   ...
 }:
-
 let
-  pre-commit = inputs.pre-commit-hooks.lib.x86_64-linux.run {
+  system = "x86_64-linux";
+  legacy = pkgs.legacyPackages.${system};
+
+  pre-commit = inputs.pre-commit-hooks.lib.${system}.run {
     src = ../.;
     hooks = {
-      # Nix formatting
-      nixfmt-rfc-style = {
-        enable = true;
-      };
-
-      # General code formatting
-      prettier = {
-        enable = true;
-      };
-
-      # Python linting
-      ruff = {
-        enable = true;
-      };
+      nixfmt-rfc-style.enable = true;
+      prettier.enable = true;
+      ruff.enable = true;
     };
   };
 in
 {
-  checks.x86_64-linux = {
-    pre-commit-check = pre-commit;
-  };
+  checks.${system}.pre-commit-check = pre-commit;
 
-  # Development shell with pre-commit hooks
-  devShells.x86_64-linux.default = pkgs.legacyPackages.x86_64-linux.mkShell {
+  devShells.${system}.default = legacy.mkShell {
     inherit (pre-commit) shellHook;
-
-    packages = with pkgs; [
+    packages = with legacy; [
       bashInteractive
+      nixfmt-rfc-style
+      nodePackages.prettier
+      ruff
     ];
-
-    buildInputs = pre-commit.enabledPackages ++ [
-      pkgs.legacyPackages.x86_64-linux.nixfmt-rfc-style
-      pkgs.legacyPackages.x86_64-linux.nodePackages.prettier
-      pkgs.legacyPackages.x86_64-linux.ruff
-    ];
+    buildInputs = pre-commit.enabledPackages;
   };
 }
