@@ -76,6 +76,10 @@
   # ========================================
   modules.secrets.preservation.enable = false;
   modules.secrets.docker.enable = true;
+  modules.secrets.runners.enable = true;
+
+  # Enabled GithubRunner
+  modules.runner.enable = true;
 
   modules.metrics = {
     prometheus = {
