@@ -12,6 +12,8 @@
     ../modules/nixos/base
     ../modules/nixos/docker
     ../secrets/secrets.nix
+    inputs.disko.nixosModules.default
+    ../disks/dock03.nix
   ];
 
   # ========================================
@@ -28,35 +30,6 @@
   boot.initrd.kernelModules = [ ];
   boot.kernelModules = [ ];
   boot.extraModulePackages = [ ];
-
-  fileSystems."/" = {
-    device = "/dev/disk/by-uuid/ee984dbe-e3c2-4acd-9516-d845ef70f003";
-    fsType = "btrfs";
-    options = [ "subvol=@root" ];
-  };
-
-  fileSystems."/home" = {
-    device = "/dev/disk/by-uuid/ee984dbe-e3c2-4acd-9516-d845ef70f003";
-    fsType = "btrfs";
-    options = [ "subvol=@home" ];
-  };
-
-  fileSystems."/nix" = {
-    device = "/dev/disk/by-uuid/ee984dbe-e3c2-4acd-9516-d845ef70f003";
-    fsType = "btrfs";
-    options = [ "subvol=@nix" ];
-  };
-
-  fileSystems."/var/lib/docker" = {
-    device = "/dev/disk/by-uuid/ee984dbe-e3c2-4acd-9516-d845ef70f003";
-    fsType = "btrfs";
-    options = [ "subvol=@docker" ];
-  };
-
-  fileSystems."/boot" = {
-    device = "/dev/disk/by-uuid/1de10ed8-183f-4b31-916e-bb0e4cc85253";
-    fsType = "ext4";
-  };
 
   swapDevices = [ ];
 
