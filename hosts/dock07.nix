@@ -3,6 +3,7 @@
   lib,
   pkgs,
   modulesPath,
+  inputs,
   ...
 }:
 
@@ -38,11 +39,6 @@
   # ========================================
   # HOST-SPECIFIC CONFIGURATION
   # ========================================
-  # Bootloader for BIOS
-  boot.loader.grub = {
-    enable = true;
-    device = "/dev/sda";
-  };
 
   # ========================================
   # MODULE CONFIGURATION
