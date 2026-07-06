@@ -38,11 +38,8 @@
     ];
   };
 
-  systemd.network.networks."40-macvlan-mgmt" = lib.mkIf (hostname == "dock01") {
-    matchConfig.Name = "macvlan-mgmt";
-    routes = [
-      { routeConfig = { Destination = "10.0.0.0/23"; Scope = "link"; }; }
-      { routeConfig = { Destination = "fd0a:0:1::/64"; Scope = "link"; }; }
-    ];
-  };
+  networking.localCommands = lib.mkIf (hostname == "dock01") ''
+    ip route replace 10.0.0.0/23 dev macvlan-mgmt 2>/dev/null || true
+    ip route replace fd0a:0:1::/64 dev macvlan-mgmt 2>/dev/null || true
+  '';
 }
