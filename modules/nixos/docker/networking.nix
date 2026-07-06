@@ -15,6 +15,13 @@
       };
     };
 
+    dhcpcd.runHook = lib.mkIf (hostname == "dock01") ''
+      if [ "$interface" = "ens18" ] && [ "$reason" = "BOUND" -o "$reason" = "REBIND" -o "$reason" = "RENEW" ]; then
+        ip route replace 10.0.0.0/23 dev macvlan-mgmt
+        ip route replace fd0a:0:1::/64 dev macvlan-mgmt
+      fi
+    '';
+
     interfaces = lib.mkMerge [
 
       # Management interface for dock01
@@ -37,9 +44,4 @@
       }
     ];
   };
-
-  networking.localCommands = lib.mkIf (hostname == "dock01") ''
-    ip route replace 10.0.0.0/23 dev macvlan-mgmt 2>/dev/null || true
-    ip route replace fd0a:0:1::/64 dev macvlan-mgmt 2>/dev/null || true
-  '';
 }
