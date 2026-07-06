@@ -19,7 +19,7 @@
     nameservers =
       if hostname == "dock01" then
         [
-          "10.0.1.2"
+          "10.0.0.1"
           "1.1.1.1"
         ]
       else
@@ -36,7 +36,7 @@
   services.resolved = lib.mkIf (hostname != "dock01") {
     dnssec = lib.mkIf (hostname != "dock01") "false";
     extraConfig = ''
-      DNS=10.0.1.2
+      DNS=10.0.0.1
       FallbackDNS=1.1.1.1 1.0.0.1
       DNSStubListener=yes
     '';
