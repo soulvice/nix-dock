@@ -5,27 +5,29 @@
   # ens19 - Untagged NIC used for network communication for services.
   #         VLan interfaces are created with ens19 as the parent (ie: ens19.40 for tagged 40)
 
-  networking.useDHCP = false;
-
-  networking.interfaces.ens18 = {
-    useDHCP = true;
-  };
-
-  networking.interfaces.ens19 = {
+  networking = {
     useDHCP = false;
-  };
 
-  networking.macvlans = lib.mkIf (hostname == "dock01") {
-    macvlan-mgmt = {
-      interface = "ens18";
-      mode = "bridge";
+    interfaces.ens18 = {
+      useDHCP = true;
     };
-  };
 
-  networking.interfaces = lib.mkIf (hostname == "dock01") {
-    macvlan-mgmt = {
-      ipv4.addresses = [{ address = "10.0.0.254"; prefixLength = 32; }];
-      ipv6.addresses = [{ address = "fd0a:0:1::fffe"; prefixLength = 128; }];
+    interfaces.ens19 = {
+      useDHCP = false;
+    };
+
+    macvlans = lib.mkIf (hostname == "dock01") {
+      macvlan-mgmt = {
+        interface = "ens18";
+        mode = "bridge";
+      };
+    };
+
+    interfaces = lib.mkIf (hostname == "dock01") {
+      macvlan-mgmt = {
+        ipv4.addresses = [{ address = "10.0.0.254"; prefixLength = 32; }];
+        ipv6.addresses = [{ address = "fd0a:0:1::fffe"; prefixLength = 128; }];
+      };
     };
   };
 
