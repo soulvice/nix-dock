@@ -22,6 +22,10 @@
       fi
     '';
 
+    dhcpcd.extraConfig = lib.mkIf (hostname == "dock01") ''
+      denyinterfaces macvlan-mgmt
+    '';
+
     interfaces = lib.mkMerge [
 
       # Management interface for dock01
