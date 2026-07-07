@@ -30,6 +30,8 @@ in {
             coreutils   # ← cp, mkdir, chmod etc.
             bash
             curl
+            python3
+            python3Packages.pyyaml
           ];
           serviceOverrides = {
             ReadWritePaths = [ "/docker" "/tmp" ];
