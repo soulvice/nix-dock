@@ -30,8 +30,7 @@ in {
             coreutils   # ← cp, mkdir, chmod etc.
             bash
             curl
-            python3
-            python3Packages.pyyaml
+            (python3.withPackages (ps: [ ps.pyyaml ]))
           ];
           serviceOverrides = {
             ReadWritePaths = [ "/docker" "/tmp" ];
